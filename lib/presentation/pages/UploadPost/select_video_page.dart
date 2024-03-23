@@ -4,6 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_storage_path/flutter_storage_path.dart';
 import 'package:flutter/material.dart';
 import 'package:instaclone/presentation/pages/UploadPost/add_post_details_page.dart';
+import 'package:instaclone/presentation/pages/UploadPost/select_image_page.dart';
 import 'package:instaclone/presentation/pages/UploadPost/widgets/video_item_widget.dart';
 import 'package:video_player/video_player.dart';
 import 'package:instaclone/presentation/resources/themes_manager.dart';
@@ -60,8 +61,6 @@ class _SelectVideoPageState extends State<SelectVideoPage> {
     // Path to videos folders
     var videoPath = await StoragePath.videoPath;
     var videos = jsonDecode(videoPath!) as List;
-    print('here');
-    print(videos);
 
     // Video file folders
     videoFileFolders =
@@ -164,21 +163,23 @@ class _SelectVideoPageState extends State<SelectVideoPage> {
                 children: [
                   DropdownButtonHideUnderline(
                     child: DropdownButton<VideoFileModel>(
-                      iconEnabledColor: Colors.white,
+                      iconEnabledColor:
+                          Provider.of<ThemeProvider>(context).isLightTheme
+                              ? Colors.black
+                              : Colors.white,
                       items: getItems(),
                       onChanged: (VideoFileModel? d) {
-                        assert(d!.files.isNotEmpty);
                         setState(() {
                           selectedVideoFolder = d;
                           video = d!.files[0];
-                          _controller?.dispose();
-                          _controller = VideoPlayerController.file(
-                            File(video!.path),
-                          );
-                          _initializeVideoPlayerFuture =
-                              _controller!.initialize();
-                          _controller!.play();
                         });
+                        _controller?.dispose();
+                        _controller = VideoPlayerController.file(
+                          File(video!.path),
+                        );
+                        _initializeVideoPlayerFuture =
+                            _controller!.initialize();
+                        _controller!.play();
                       },
                       value: selectedVideoFolder,
                       dropdownColor:
@@ -214,9 +215,15 @@ class _SelectVideoPageState extends State<SelectVideoPage> {
                                 Icons.grid_on_sharp,
                               ),
                             ),
-                      const Icon(
-                        Icons.camera_alt,
-                      ),
+                      IconButton(
+                        onPressed: () {
+                          Navigator.of(context)
+                              .pushReplacementNamed(SelectImagePage.routename);
+                        },
+                        icon: const Icon(
+                          Icons.camera_alt,
+                        ),
+                      )
                     ],
                   ),
                 ],
@@ -286,7 +293,12 @@ class _SelectVideoPageState extends State<SelectVideoPage> {
           .map((e) => DropdownMenuItem(
                 value: e,
                 child: Text(
-                  e.folderName,
+                  e.folderName.length > 8
+                      ? "${e.folderName.substring(
+                          0,
+                          8,
+                        )}.."
+                      : e.folderName,
                   style: const TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.bold,

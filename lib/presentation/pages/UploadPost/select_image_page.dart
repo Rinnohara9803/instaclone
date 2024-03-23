@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:instaclone/presentation/pages/UploadPost/select_video_page.dart';
 import 'package:instaclone/presentation/pages/UploadPost/widgets/image_show_widget.dart';
 import 'package:flutter_storage_path/flutter_storage_path.dart';
 import 'package:flutter/material.dart';
@@ -230,8 +231,14 @@ class _SelectImagePageState extends State<SelectImagePage>
                                 Icons.grid_on_sharp,
                               ),
                             ),
-                      const Icon(
-                        Icons.camera_alt,
+                      IconButton(
+                        onPressed: () {
+                          Navigator.of(context)
+                              .pushReplacementNamed(SelectVideoPage.routename);
+                        },
+                        icon: const Icon(
+                          Icons.video_camera_back_outlined,
+                        ),
                       ),
                     ],
                   ),

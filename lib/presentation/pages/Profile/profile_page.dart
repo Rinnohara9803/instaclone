@@ -40,8 +40,6 @@ class _ProfilePageState extends State<ProfilePage>
 
   late Stream getUserInfo;
 
-  final _scrollController = ScrollController();
-
   @override
   void initState() {
     getUserInfo = ChatApis.getUserInfo(widget.chatUser);
@@ -51,9 +49,6 @@ class _ProfilePageState extends State<ProfilePage>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    print('from profile');
-    print(widget.chatUser.userName);
-    print('from profile');
     return SafeArea(
       child: DefaultTabController(
         initialIndex: 0,
@@ -493,7 +488,6 @@ class _ProfilePageState extends State<ProfilePage>
                                         children: [
                                           UserPostsGridView(
                                             chatUser: widget.chatUser,
-                                            scrollController: _scrollController,
                                           ),
                                           const Center(
                                             child: Text(

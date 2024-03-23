@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:instaclone/presentation/pages/UserPosts/widgets/post_user_details.dart';
 import 'package:instaclone/presentation/pages/UserPosts/widgets/video_post_widget.dart';
 import 'package:instaclone/utilities/my_date_util.dart';
 import 'package:flutter/material.dart';
@@ -44,11 +45,6 @@ class _UserPostWidgetState extends State<UserPostWidget>
       });
     });
 
-    // final post = Provider.of<UserPostModel>(
-    //   context,
-    //   listen: false,
-    // );
-
     super.initState();
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 200),
@@ -78,6 +74,7 @@ class _UserPostWidgetState extends State<UserPostWidget>
   @override
   void dispose() {
     _animationController.dispose();
+    _animationController1.dispose();
     _pageController.dispose();
     super.dispose();
   }
@@ -93,67 +90,7 @@ class _UserPostWidgetState extends State<UserPostWidget>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // user details
-          StreamBuilder(
-            stream: ChatApis.getUserInfoWithUserId(post.userId),
-            builder: (context, snapshot) {
-              final data = snapshot.data?.docs;
-              final list =
-                  data?.map((e) => ChatUser.fromJson(e.data())).toList() ?? [];
-              return Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      children: [
-                        // image avatar
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(
-                              MediaQuery.of(context).size.height * .2),
-                          child: CachedNetworkImage(
-                            height: MediaQuery.of(context).size.height * 0.045,
-                            width: MediaQuery.of(context).size.height * 0.045,
-                            fit: BoxFit.cover,
-                            imageUrl: list.isEmpty
-                                ? 'no image'
-                                : list[0].profileImage,
-                            progressIndicatorBuilder:
-                                (context, url, downloadProgress) =>
-                                    const CircleAvatar(
-                              backgroundColor: Colors.black54,
-                              child: Icon(
-                                Icons.person,
-                              ),
-                            ),
-                            errorWidget: (context, url, error) =>
-                                const CircleAvatar(
-                              backgroundColor: Colors.black54,
-                              child: Icon(
-                                Icons.person,
-                              ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(
-                          width: 10,
-                        ),
-
-                        // username
-                        Text(
-                          list.isEmpty ? '' : list[0].userName,
-                        ),
-                      ],
-                    ),
-                    const Icon(
-                      Icons.more_vert,
-                    ),
-                  ],
-                ),
-              );
-            },
-          ),
+          PostUserDetails(post: post),
           const SizedBox(
             height: 10,
           ),

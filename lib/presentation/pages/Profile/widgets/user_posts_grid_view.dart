@@ -1,22 +1,15 @@
-import 'dart:io';
-
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:instaclone/models/chat_user.dart';
-import 'package:instaclone/models/user_post.dart';
 import 'package:instaclone/presentation/pages/Profile/widgets/user_post_grid_view_widget.dart';
-import 'package:instaclone/presentation/pages/UserPosts/user_posts_page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
-import 'package:video_player/video_player.dart';
 
 import '../../../../providers/user_posts_provider.dart';
 
 class UserPostsGridView extends StatefulWidget {
   final ChatUser chatUser;
-  final ScrollController scrollController;
-  const UserPostsGridView(
-      {super.key, required this.chatUser, required this.scrollController});
+
+  const UserPostsGridView({super.key, required this.chatUser});
 
   @override
   State<UserPostsGridView> createState() => _UserPostsGridViewState();
@@ -59,9 +52,6 @@ class _UserPostsGridViewState extends State<UserPostsGridView>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    print('name');
-    print(widget.chatUser.userName);
-    print('name');
     return FutureBuilder(
       future: Provider.of<UserPostsProvider>(context, listen: false)
           .fetchAllPostsOfUserWithLimit(widget.chatUser.userId, currentLimit),
@@ -113,7 +103,6 @@ class _UserPostsGridViewState extends State<UserPostsGridView>
                   child: GridView.builder(
                     shrinkWrap: true,
                     physics: const BouncingScrollPhysics(),
-                    controller: widget.scrollController,
                     itemCount: postData.userPosts.length,
                     gridDelegate:
                         const SliverGridDelegateWithFixedCrossAxisCount(

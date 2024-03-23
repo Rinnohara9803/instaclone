@@ -185,6 +185,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.6"
+  dashed_circle:
+    dependency: "direct main"
+    description:
+      name: dashed_circle
+      sha256: "26636eb6e90da37464caf02d595ba4ecd38509418b7f224906fe52e1be5c84f8"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.2"
   dio:
     dependency: "direct main"
     description:
@@ -462,6 +470,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.17"
+  flutter_screenutil:
+    dependency: "direct main"
+    description:
+      name: flutter_screenutil
+      sha256: "8cf100b8e4973dc570b6415a2090b0bfaa8756ad333db46939efc3e774ee100d"
+      url: "https://pub.dev"
+    source: hosted
+    version: "5.9.0"
   flutter_storage_path:
     dependency: "direct main"
     description:
@@ -488,6 +504,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.5"
+  font_awesome_flutter:
+    dependency: "direct main"
+    description:
+      name: font_awesome_flutter
+      sha256: "275ff26905134bcb59417cf60ad979136f1f8257f2f449914b2c3e05bbb4cd6f"
+      url: "https://pub.dev"
+    source: hosted
+    version: "10.7.0"
   geocoding:
     dependency: "direct main"
     description:
@@ -960,6 +984,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.0.0"
+  rect_getter:
+    dependency: "direct main"
+    description:
+      name: rect_getter
+      sha256: "1c71e4ab5fb7d83d2b14a8338f979bc9ae57eefba786e7fbc91f6746dac2193d"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.1.0"
   rxdart:
     dependency: transitive
     description:
@@ -1029,6 +1061,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.11.1"
+  story_view:
+    dependency: "direct main"
+    description:
+      name: story_view
+      sha256: ab64063569178e405b643ab11bdc28d6e85333191e3c8b5556e864fe6c5b2a5a
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.16.5"
   stream_channel:
     dependency: transitive
     description:

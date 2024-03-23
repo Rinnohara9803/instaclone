@@ -1,40 +1,40 @@
-enum StoryType {
-  image,
-  video,
-}
+import 'package:instaclone/models/chat_user.dart';
+
+enum MediaType { image, video }
 
 class Story {
-  final String id; // Unique identifier for the story
-  final String username;
-  final String mediaUrl; // URL of the image or video
-  final StoryType type;
-  final Duration duration; // Duration of the story
+  final String storyId;
+  final String url;
+  final MediaType media;
+  final String userId;
+  final List<String> viewedBy;
 
-  Story({
-    required this.id,
-    required this.username,
-    required this.mediaUrl,
-    required this.type,
-    required this.duration,
+  const Story({
+    required this.storyId,
+    required this.url,
+    required this.media,
+    required this.userId,
+    required this.viewedBy,
   });
-
-  factory Story.fromJson(Map<String, dynamic> json) {
-    return Story(
-      id: json['id'] as String,
-      username: json['username'] as String,
-      mediaUrl: json['mediaUrl'] as String,
-      type: json['type'] == 'image' ? StoryType.image : StoryType.video,
-      duration: Duration(milliseconds: json['duration'] as int),
-    );
-  }
 
   Map<String, dynamic> toJson() {
     return {
-      'id': id,
-      'username': username,
-      'mediaUrl': mediaUrl,
-      'type': type == StoryType.image ? 'image' : 'video',
-      'duration': duration.inMilliseconds,
+      'storyId': storyId,
+      'url': url,
+      'media': media.index, // Store enum as its index
+      'userID': userId, // Assuming ChatUser has toJson method
+      'viewedBy': viewedBy,
     };
+  }
+
+  // Named constructor to create a Story instance from a Map
+  factory Story.fromJson(Map<String, dynamic> json) {
+    return Story(
+      storyId: json['storyId'],
+      url: json['url'],
+      media: MediaType.values[json['media']], // Convert index back to enum
+      userId: json['userId'], // Assuming ChatUser has fromJson method
+      viewedBy: List<String>.from(json['viewedBy']),
+    );
   }
 }

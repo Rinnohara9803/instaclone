@@ -13,6 +13,8 @@ import 'package:instaclone/providers/chat_details_provider.dart';
 import 'package:instaclone/providers/profile_data_provider.dart';
 import 'package:instaclone/providers/profile_provider.dart';
 import 'package:instaclone/providers/user_posts_provider.dart';
+import 'package:instaclone/providers/user_stories_provider.dart';
+import 'package:instaclone/providers/video_provider.dart';
 import 'package:provider/provider.dart';
 // import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
 // import 'package:zego_uikit_signaling_plugin/zego_uikit_signaling_plugin.dart';
@@ -69,6 +71,12 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider<ChatDetailsProvider>(
           create: (context) => ChatDetailsProvider(),
+        ),
+        ChangeNotifierProvider<VideoPlayerProvider>(
+          create: (context) => VideoPlayerProvider(),
+        ),
+        ChangeNotifierProvider<UserStoriesProvider>(
+          create: (context) => UserStoriesProvider(),
         ),
       ],
       child: Consumer<ThemeProvider>(

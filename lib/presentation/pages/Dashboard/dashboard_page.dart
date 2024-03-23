@@ -49,7 +49,7 @@ class _DashboardPageState extends State<DashboardPage>
       var permission = await Permission.storage.request();
       if (permission == PermissionStatus.granted) {
         // ignore: use_build_context_synchronously
-        Navigator.of(context).pushNamed(SelectVideoPage.routename);
+        Navigator.of(context).pushNamed(SelectImagePage.routename);
       } else {
         throw 'Photos access denied.';
       }

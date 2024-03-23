@@ -1,7 +1,10 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:instaclone/presentation/pages/AddStory/add_story_page.dart';
 
 class CameraPage extends StatefulWidget {
   final Function navigateBack;
@@ -16,17 +19,19 @@ class _CameraPageState extends State<CameraPage> {
     final ImagePicker picker = ImagePicker();
 
     // Pick an image
-    final XFile? image =
-        await picker.pickImage(source: ImageSource.camera, imageQuality: 70);
+    final XFile? image = await picker.pickVideo(
+      source: ImageSource.camera,
+      maxDuration: const Duration(
+        seconds: 30,
+      ),
+    );
     if (image != null) {
       log('Image Path: ${image.path}');
-      // setState(
-      //   () => _isUploading = true,
-      // );
-
-      // setState(
-      //   () => _isUploading = false,
-      // );
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => AddStoryPage(videoPath: image.path),
+        ),
+      );
     } else {
       widget.navigateBack();
     }
