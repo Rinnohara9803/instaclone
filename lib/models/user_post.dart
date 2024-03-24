@@ -21,7 +21,7 @@ class UserPostModel with ChangeNotifier {
   late final String location;
   late final String caption;
   late final String id;
-  late final List<Likes> likes;
+  late final List<UserID> likes;
   late final List<Bookmarks> bookmarks;
   late final String userId;
   late bool isLiked;
@@ -69,7 +69,7 @@ class UserPostModel with ChangeNotifier {
       isLiked = true;
       notifyListeners();
 
-      likes.add(Likes(userId: UserApis.user!.uid));
+      likes.add(UserID(userId: UserApis.user!.uid));
       await UserApis.firestore
           .collection('posts/$userId/userposts/')
           .doc(id)
@@ -107,7 +107,7 @@ class UserPostModel with ChangeNotifier {
     location = json['location'];
     caption = json['caption'];
     id = json['id'];
-    likes = List.from(json['likes']).map((e) => Likes.fromJson(e)).toList();
+    likes = List.from(json['likes']).map((e) => UserID.fromJson(e)).toList();
     bookmarks =
         List.from(json['bookmarks']).map((e) => Bookmarks.fromJson(e)).toList();
     userId = json['userId'];
@@ -154,13 +154,13 @@ class Images {
   }
 }
 
-class Likes {
-  Likes({
+class UserID {
+  UserID({
     required this.userId,
   });
   late final String userId;
 
-  Likes.fromJson(Map<String, dynamic> json) {
+  UserID.fromJson(Map<String, dynamic> json) {
     userId = json['userId'];
   }
 

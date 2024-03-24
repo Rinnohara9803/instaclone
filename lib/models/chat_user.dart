@@ -23,7 +23,7 @@ class ChatUser {
     lastActive = json['lastActive'] ?? '';
     isOnline = json['isOnline'];
     profileImage = json['profileImage'] ?? '';
-    userName = json['userName'] ?? '';
+    userName = json['userName'] ?? 'User';
     pushToken = json['pushToken'] ?? '';
     userId = json['userId'] ?? '';
     email = json['email'] ?? '';

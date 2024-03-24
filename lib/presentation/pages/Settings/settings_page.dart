@@ -1,3 +1,5 @@
+import 'package:instaclone/presentation/pages/Login/login_page.dart';
+import 'package:instaclone/presentation/pages/Register/register_with_email_page.dart';
 import 'package:instaclone/presentation/pages/Settings/dark_mode_page.dart';
 import 'package:flutter/material.dart';
 
@@ -43,6 +45,14 @@ class _SettingsPageState extends State<SettingsPage> {
               builder: (context) => const DarkModePage(),
             ),
           );
+        },
+      ),
+      SettingsWidgetModel(
+        label: 'Log Out',
+        iconData: Icons.logout,
+        onTap: () {
+          Navigator.of(context)
+              .pushNamedAndRemoveUntil(LoginPage.routename, (route) => false);
         },
       ),
     ];

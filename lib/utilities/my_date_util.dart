@@ -94,6 +94,53 @@ class MyDateUtil {
         : '${theTime.day} ${_getMonth(theTime)}';
   }
 
+  //get user's story time
+  static String getUsersStoryTime(
+      {required BuildContext context,
+      required String time,
+      bool showYear = false}) {
+    final DateTime theTime =
+        DateTime.fromMillisecondsSinceEpoch(int.parse(time));
+    final DateTime now = DateTime.now();
+
+    if (now.minute == theTime.minute &&
+        now.hour == theTime.hour &&
+        now.day == theTime.day) {
+      print('difference in seconds');
+      int differenceInSeconds = now.second - theTime.second;
+
+      return '$differenceInSeconds s';
+    } else if (now.hour == theTime.hour && now.day == theTime.day) {
+      print('difference in minutes');
+      int differenceInMinutes = now.minute - theTime.minute;
+
+      return differenceInMinutes == 1
+          ? 'a minute ago'
+          : '$differenceInMinutes mins';
+    } else if (now.day == theTime.day) {
+      print('difference in hours');
+      int differenceInHours = now.hour - theTime.hour;
+
+      return differenceInHours == 1 ? 'an hour ago' : '$differenceInHours hrs';
+    } else if (now.month == theTime.month && now.day != theTime.day) {
+      print('different in days');
+
+      int differenceInDays = now.day - theTime.day;
+      return differenceInDays == 1 ? 'a day ago' : '$differenceInDays days ago';
+    } else if (now.year == theTime.year && now.day != theTime.day) {
+      print('different in months');
+
+      int differenceInMonths = now.month - theTime.month;
+      return differenceInMonths == 1
+          ? 'a month ago'
+          : '$differenceInMonths months ago';
+    }
+
+    return showYear
+        ? '${theTime.day} ${_getMonth(theTime)} ${theTime.year}'
+        : '${theTime.day} ${_getMonth(theTime)}';
+  }
+
   //get formatted last active time of user in chat screen
   static String getLastActiveTime(
       {required BuildContext context, required String lastActive}) {

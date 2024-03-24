@@ -1,40 +1,90 @@
+import 'package:flutter/material.dart';
+import 'package:instaclone/apis/user_apis.dart';
 import 'package:instaclone/models/chat_user.dart';
+import 'package:instaclone/models/user_post.dart';
+import 'package:collection/collection.dart';
 
 enum MediaType { image, video }
 
-class Story {
-  final String storyId;
-  final String url;
-  final MediaType media;
-  final String userId;
-  final List<String> viewedBy;
-
-  const Story({
+class Story with ChangeNotifier {
+  Story({
     required this.storyId,
     required this.url,
     required this.media,
     required this.userId,
     required this.viewedBy,
+    this.isViewed = false,
   });
 
-  Map<String, dynamic> toJson() {
-    return {
-      'storyId': storyId,
-      'url': url,
-      'media': media.index, // Store enum as its index
-      'userID': userId, // Assuming ChatUser has toJson method
-      'viewedBy': viewedBy,
-    };
+  late final int storyId;
+  late final String url;
+  late final MediaType media;
+  late final String userId;
+  late final List<UserID> viewedBy;
+  late bool isViewed;
+
+  Map<String, dynamic> toJson() => {
+        'storyId': storyId,
+        'url': url,
+        'media': media.index,
+        'userId': userId,
+        'viewedBy': viewedBy.map((e) => e.toJson()).toList(),
+        'isViewed': viewedBy.map((e) => e.toJson()).toList(),
+      };
+
+  Story.fromJson(Map<String, dynamic> json) {
+    storyId = json['storyId'] ?? 0;
+    url = json['url'] ?? '';
+    media = MediaType.values[json['media']];
+    userId = json['userId'] ?? '';
+    viewedBy = List<UserID>.from(
+      (json['viewedBy'] ?? []).map(
+        (e) => UserID.fromJson(e),
+      ),
+    );
+    isViewed = viewedBy.firstWhereOrNull(
+            (element) => element.userId == UserApis.user!.uid) !=
+        null;
   }
 
-  // Named constructor to create a Story instance from a Map
-  factory Story.fromJson(Map<String, dynamic> json) {
-    return Story(
-      storyId: json['storyId'],
-      url: json['url'],
-      media: MediaType.values[json['media']], // Convert index back to enum
-      userId: json['userId'], // Assuming ChatUser has fromJson method
-      viewedBy: List<String>.from(json['viewedBy']),
-    );
+  Future<void> updateIsViewed() async {
+    try {
+      viewedBy.add(UserID(userId: UserApis.user!.uid));
+
+      await UserApis.firestore
+          .collection('stories/$userId/userstories/')
+          .doc(storyId.toString())
+          .update({
+        'viewedBy': viewedBy.map((e) => e.toJson()).toList(),
+      }).then((value) {
+        isViewed = true;
+        notifyListeners();
+      }).catchError((e) {
+        print(e.toString());
+        return;
+      });
+    } catch (e) {
+      print(e.toString());
+      return;
+    }
+  }
+}
+
+class UserStory with ChangeNotifier {
+  final List<Story> stories;
+  final ChatUser user;
+  bool isViewedCompletely;
+
+  UserStory({
+    required this.stories,
+    required this.user,
+    this.isViewedCompletely = false,
+  }) {
+    isViewedCompletely = stories.every((story) => story.isViewed);
+  }
+
+  void changeIsViewedStatus() async {
+    isViewedCompletely = true;
+    notifyListeners();
   }
 }
