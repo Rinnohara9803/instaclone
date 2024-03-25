@@ -1,6 +1,4 @@
 import 'dart:io';
-
-import 'package:instaclone/presentation/pages/Dashboard/dashboard_page.dart';
 import 'package:instaclone/presentation/pages/Dashboard/initial_page.dart';
 import 'package:instaclone/presentation/pages/Login/login_page.dart';
 import 'package:instaclone/presentation/resources/assets_manager.dart';

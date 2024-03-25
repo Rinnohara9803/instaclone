@@ -34,7 +34,7 @@ class UserPostModel with ChangeNotifier {
 
       bookmarks.add(Bookmarks(userId: UserApis.user!.uid));
       await UserApis.firestore
-          .collection('posts/$userId/userposts/')
+          .collection('posts')
           .doc(id)
           .update({
             'bookmarks': bookmarks.map((e) => e.toJson()).toList(),
@@ -49,7 +49,7 @@ class UserPostModel with ChangeNotifier {
       notifyListeners();
       bookmarks.removeWhere((element) => element.userId == UserApis.user!.uid);
       await UserApis.firestore
-          .collection('posts/$userId/userposts/')
+          .collection('posts')
           .doc(id)
           .update(
             {
@@ -71,7 +71,7 @@ class UserPostModel with ChangeNotifier {
 
       likes.add(UserID(userId: UserApis.user!.uid));
       await UserApis.firestore
-          .collection('posts/$userId/userposts/')
+          .collection('posts')
           .doc(id)
           .update({
             'likes': likes.map((e) => e.toJson()).toList(),
@@ -86,7 +86,7 @@ class UserPostModel with ChangeNotifier {
       notifyListeners();
       likes.removeWhere((element) => element.userId == UserApis.user!.uid);
       await UserApis.firestore
-          .collection('posts/$userId/userposts/')
+          .collection('posts')
           .doc(id)
           .update(
             {

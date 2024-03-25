@@ -1,5 +1,6 @@
 import 'package:audioplayers/audioplayers.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:instaclone/presentation/resources/themes_manager.dart';
 import 'package:instaclone/utilities/my_date_util.dart';
 import 'package:flutter/material.dart';
@@ -703,11 +704,11 @@ class _MessageCardState extends State<MessageCard> {
     super.dispose();
   }
 
+  final userId = FirebaseAuth.instance.currentUser!.uid;
+
   @override
   Widget build(BuildContext context) {
     // widget.getIsVideoCallOnValue(widget.chatMessage.isVideoCallOn);
-    return widget.chatMessage.fromId == ChatApis.user!.uid
-        ? blueMessage()
-        : greyMessage();
+    return widget.chatMessage.fromId == userId ? blueMessage() : greyMessage();
   }
 }

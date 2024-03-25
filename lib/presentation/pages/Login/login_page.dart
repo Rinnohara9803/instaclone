@@ -130,8 +130,8 @@ class _LoginPageState extends State<LoginPage> {
                                 listen: false)
                             .fetchProfile()
                             .then((value) {
-                          Navigator.of(context)
-                              .pushNamed(InitialPage.routename);
+                          Navigator.of(context).pushNamedAndRemoveUntil(
+                              InitialPage.routename, (route) => false);
                         });
                       } else {
                         Navigator.of(context)

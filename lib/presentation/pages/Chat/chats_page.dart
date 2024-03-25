@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:instaclone/apis/chat_apis.dart';
 import 'package:instaclone/apis/user_apis.dart';
 import 'package:flutter/material.dart';
@@ -19,6 +20,7 @@ class ChatsPage extends StatefulWidget {
 class _ChatsPageState extends State<ChatsPage> {
   List<String> userIds = [];
   List<ChatUser> users = [];
+  final user = FirebaseAuth.instance.currentUser;
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -34,12 +36,12 @@ class _ChatsPageState extends State<ChatsPage> {
             },
           ),
           title: Text(
-            ChatApis.user!.email as String,
+            user!.email as String,
             style: Theme.of(context).textTheme.bodyMedium!,
           ),
         ),
         body: StreamBuilder(
-          stream: UserApis.getAllFollowings(UserApis.user!.uid),
+          stream: UserApis.getAllFollowings(user!.uid),
           builder: (context, snapshot) {
             switch (snapshot.connectionState) {
               case ConnectionState.waiting:

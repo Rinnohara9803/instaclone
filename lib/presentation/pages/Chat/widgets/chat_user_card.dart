@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:instaclone/models/chat_message.dart';
 import 'package:instaclone/presentation/pages/Chat/chat_page.dart';
 import 'package:instaclone/services/sound_recorder.dart';
@@ -23,24 +24,29 @@ class ChatUserCard extends StatefulWidget {
 
 class _ChatUserCardState extends State<ChatUserCard> {
   ChatMessage? message;
+  final userId = FirebaseAuth.instance.currentUser!.uid;
 
   Widget messageContent(ChatMessageType chatMessageType) {
     switch (chatMessageType) {
       case ChatMessageType.text:
         return Text(
           message != null
-              ? ChatApis.user?.uid == message!.fromId
+              ? userId == message!.fromId
                   ? 'You: ${message!.message}'
                   : message!.message
               : 'Wave 🙌',
           overflow: TextOverflow.ellipsis,
           maxLines: 1,
-          style: Theme.of(context).textTheme.bodyMedium,
+          style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+              // fontWeight: message!.read.isEmpty && message != null
+              //     ? FontWeight.normal
+              //     : FontWeight.bold,
+              ),
         );
       case ChatMessageType.image:
         return Text(
           message != null
-              ? ChatApis.user!.uid == message!.fromId
+              ? userId == message!.fromId
                   ? 'You sent an image.'
                   : '${widget.chatUser.userName} sent an image.'
               : 'Wave 🙌',
@@ -50,7 +56,7 @@ class _ChatUserCardState extends State<ChatUserCard> {
       case ChatMessageType.videoChat:
         return Text(
           message != null
-              ? ChatApis.user!.uid == message!.fromId
+              ? userId == message!.fromId
                   ? 'You started a call.'
                   : '${widget.chatUser.userName} started a call.'
               : 'Wave 🙌',
@@ -59,7 +65,7 @@ class _ChatUserCardState extends State<ChatUserCard> {
 
       case ChatMessageType.audio:
         return Text(
-          ChatApis.user!.uid == message!.fromId
+          userId == message!.fromId
               ? 'You sent a voice message.'
               : '${widget.chatUser.userName} sent a voice message.',
           overflow: TextOverflow.ellipsis,
@@ -106,15 +112,17 @@ class _ChatUserCardState extends State<ChatUserCard> {
                     imageUrl: widget.chatUser.profileImage,
                     progressIndicatorBuilder:
                         (context, url, downloadProgress) => const CircleAvatar(
-                      backgroundColor: Colors.white,
+                      backgroundColor: Colors.grey,
                       child: Icon(
                         Icons.person,
+                        color: Colors.black,
                       ),
                     ),
                     errorWidget: (context, url, error) => const CircleAvatar(
-                      backgroundColor: Colors.white,
+                      backgroundColor: Colors.grey,
                       child: Icon(
                         Icons.person,
+                        color: Colors.black,
                       ),
                     ),
                   ),

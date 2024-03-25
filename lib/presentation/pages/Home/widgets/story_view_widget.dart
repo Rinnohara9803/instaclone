@@ -4,6 +4,7 @@ import 'package:instaclone/models/story.dart';
 import 'package:instaclone/presentation/resources/constants/sizedbox_constants.dart';
 import 'package:instaclone/providers/user_stories_provider.dart';
 import 'package:instaclone/utilities/my_date_util.dart';
+import 'package:instaclone/utilities/snackbars.dart';
 import 'package:provider/provider.dart';
 import 'package:story_view/controller/story_controller.dart';
 import 'package:story_view/widgets/story_view.dart';
@@ -64,7 +65,11 @@ class _StoryViewWidgetState extends State<StoryViewWidget> {
           onStoryShow: (storyItem, index) async {
             final index = storyItems.indexOf(storyItem);
             if (widget.userStory.stories[index].isViewed == false) {
-              widget.userStory.stories[index].updateIsViewed();
+              widget.userStory.stories[index].updateIsViewed().then((value) {
+                // SnackBars.showNormalSnackbar(context, 'Updated');
+              }).catchError((e) {
+                // SnackBars.showErrorSnackBar(context, 'error');
+              });
             }
 
             if (index > 0) {

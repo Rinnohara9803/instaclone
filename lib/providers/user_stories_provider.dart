@@ -6,10 +6,11 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:instaclone/models/chat_user.dart';
 import 'package:instaclone/models/story.dart';
+import 'package:instaclone/providers/profile_provider.dart';
+import 'package:provider/provider.dart';
 
 class UserStoriesProvider with ChangeNotifier {
   final firestore = FirebaseFirestore.instance;
-  final user = FirebaseAuth.instance.currentUser;
 
   List<String> _followingsList = [];
 
@@ -29,10 +30,10 @@ class UserStoriesProvider with ChangeNotifier {
     return [..._followingsStories];
   }
 
-  DateTime getOneHourAgoTimestamp() {
+  DateTime getADayAgoTimestamp() {
     return DateTime.now().subtract(
       const Duration(
-        hours: 10,
+        hours: 50,
       ),
     );
   }
@@ -40,19 +41,17 @@ class UserStoriesProvider with ChangeNotifier {
   Future<void> fetchUserStory(String userId) async {
     try {
       List<Story> listOfStories = [];
-      final oneHourAgoTimestamp = getOneHourAgoTimestamp();
-
+      final aDayAgoTimestamp = getADayAgoTimestamp();
       await firestore
           .collection('stories/$userId/userstories/')
           .where(
             'storyId',
-            isGreaterThan: oneHourAgoTimestamp.microsecondsSinceEpoch,
+            isGreaterThan: aDayAgoTimestamp.millisecondsSinceEpoch,
           )
-          // .orderBy('storyId', descending: true)
+          .orderBy('storyId', descending: true)
           .get()
           .then((data) {
         if (data.docs.isNotEmpty) {
-          print(userId + ' yes data');
           for (var i in data.docs) {
             listOfStories.add(
               Story.fromJson(
@@ -60,9 +59,7 @@ class UserStoriesProvider with ChangeNotifier {
               ),
             );
           }
-        } else {
-          print(userId + ' no data');
-        }
+        } else {}
       }).then((value) async {
         if (listOfStories.isNotEmpty) {
           if (listOfStories.isNotEmpty) {
@@ -74,15 +71,20 @@ class UserStoriesProvider with ChangeNotifier {
               (data) {
                 ChatUser chatUser =
                     ChatUser.fromJson(data.data() as Map<String, dynamic>);
-                _myStory = UserStory(stories: listOfStories, user: chatUser);
-                _followingsStories.add(_myStory!);
-                notifyListeners();
+                final theStory =
+                    UserStory(stories: listOfStories, user: chatUser);
+                if (theStory.isViewedCompletely) {
+                  _followingsStories.add(theStory);
+                  notifyListeners();
+                } else {
+                  _followingsStories.insert(0, theStory);
+                  notifyListeners();
+                }
               },
             );
           }
         } else {
-          _followingsStories = [];
-          notifyListeners();
+          return;
         }
       });
     } catch (e) {
@@ -91,6 +93,8 @@ class UserStoriesProvider with ChangeNotifier {
   }
 
   Future<void> fetchFollowingsStories() async {
+    final user = FirebaseAuth.instance.currentUser;
+
     _followingsStories = [];
     notifyListeners();
     try {
@@ -99,6 +103,7 @@ class UserStoriesProvider with ChangeNotifier {
           .get()
           .then((snapshot) async {
         _followingsList = [];
+        // _followingsList.add(user!.uid);
         for (var i in snapshot.docs) {
           _followingsList.add(i.data()['userId']);
         }
@@ -108,16 +113,68 @@ class UserStoriesProvider with ChangeNotifier {
           }
         }
       });
-      for (var i in _followingsStories) {
-        print(i.stories.length);
-      }
     } catch (e) {
       return Future.error(e.toString());
     }
   }
 
+  Future<void> fetchMyStory(String userId) async {
+    // _myStory = null;
+    // notifyListeners();
+
+    try {
+      List<Story> listOfStories = [];
+      final aDayAgoTimestamp = getADayAgoTimestamp();
+      await firestore
+          .collection('stories/$userId/userstories/')
+          .where(
+            'storyId',
+            isGreaterThan: aDayAgoTimestamp.millisecondsSinceEpoch,
+          )
+          .orderBy('storyId', descending: true)
+          .get()
+          .then((data) {
+        if (data.docs.isNotEmpty) {
+          for (var i in data.docs) {
+            listOfStories.add(
+              Story.fromJson(
+                i.data(),
+              ),
+            );
+          }
+        } else {
+          _myStory = null;
+          notifyListeners();
+        }
+      }).then((value) async {
+        if (listOfStories.isNotEmpty) {
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(userId)
+              .get()
+              .then(
+            (data) {
+              ChatUser chatUser =
+                  ChatUser.fromJson(data.data() as Map<String, dynamic>);
+              _myStory = UserStory(stories: listOfStories, user: chatUser);
+              print(_myStory?.user.userName);
+              notifyListeners();
+              _followingsStories.insert(0, _myStory!);
+              notifyListeners();
+            },
+          );
+        }
+      });
+    } catch (e) {
+      _myStory = null;
+      notifyListeners();
+    }
+  }
+
   Future<void> addStory(mediaType, mediaPath) async {
     final storyId = DateTime.now().millisecondsSinceEpoch;
+    final user = FirebaseAuth.instance.currentUser;
+
     try {
       await FirebaseStorage.instance
           .ref(

@@ -25,10 +25,10 @@ class AuthService {
         'email': email,
         'createdAt': time,
         'isOnline': false,
-        'profileImage': '',
-        'lastActive': '',
-        'pushToken': '',
-        'userName': '',
+        'profileImage': null,
+        'lastActive': null,
+        'pushToken': null,
+        'userName': null,
       });
     } on FirebaseException catch (e) {
       return Future.error(e.toString());

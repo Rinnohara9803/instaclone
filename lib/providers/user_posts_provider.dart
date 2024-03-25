@@ -29,10 +29,7 @@ class UserPostsProvider with ChangeNotifier {
   // upload post to database
   Future<void> addPost(UserPostModel userPostModel) async {
     try {
-      await firestore
-          .collection('posts/${user!.uid}/userposts/')
-          .doc(userPostModel.id)
-          .set(
+      await firestore.collection('posts/').doc(userPostModel.id).set(
             userPostModel.toJson(),
           );
     } catch (e) {
@@ -43,10 +40,12 @@ class UserPostsProvider with ChangeNotifier {
   // fetch posts with user's id
   Future<void> fetchAllPostsOfUserWithLimit(
       String userId, int limitValue) async {
+    print('fetching user posts');
     try {
       List<UserPostModel> listOfPosts = [];
       await firestore
-          .collection('posts/$userId/userposts/')
+          .collection('posts')
+          .where('userId', isEqualTo: userId)
           .orderBy('id', descending: true)
           .limit(
             limitValue,
@@ -63,8 +62,11 @@ class UserPostsProvider with ChangeNotifier {
       });
       _userPosts = listOfPosts;
       notifyListeners();
+      print(_userPosts.length);
       print(_userPosts[0]);
     } catch (e) {
+      print('error fetching user posts');
+      print(e.toString());
       return Future.error(e.toString());
     }
   }
@@ -74,7 +76,8 @@ class UserPostsProvider with ChangeNotifier {
     try {
       List<UserPostModel> listOfPosts = [];
       await firestore
-          .collection('posts/$userId/userposts/')
+          .collection('posts')
+          .where('userId', isEqualTo: userId)
           .orderBy('id', descending: true)
           .get()
           .then((data) {
@@ -94,33 +97,32 @@ class UserPostsProvider with ChangeNotifier {
   }
 
   Future<void> fetchLatestPosts() async {
+    final userId = FirebaseAuth.instance.currentUser!.uid;
     try {
       List<UserPostModel> listOfPosts = [];
       List<String> followingsIds = [];
       await firestore
-          .collection('followings/${UserApis.user!.uid}/userFollowings/')
+          .collection('followings/$userId/userFollowings/')
           .get()
           .then((data) {
         for (var i in data.docs) {
           followingsIds.add(i.data()['userId']);
         }
       }).then((value) async {
-        for (var i in followingsIds) {
-          print(i);
-          await firestore
-              .collection('posts/$i/userposts/')
-              .orderBy('id', descending: true)
-              .get()
-              .then((data) {
-            for (var i in data.docs) {
-              listOfPosts.add(
-                UserPostModel.fromJson(
-                  i.data(),
-                ),
-              );
-            }
-          });
-        }
+        await firestore
+            .collection('posts')
+            .where('userId', whereIn: followingsIds)
+            .orderBy('id', descending: true)
+            .get()
+            .then((data) {
+          for (var i in data.docs) {
+            listOfPosts.add(
+              UserPostModel.fromJson(
+                i.data(),
+              ),
+            );
+          }
+        });
       });
       _latestPosts = listOfPosts;
       notifyListeners();

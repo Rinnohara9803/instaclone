@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:instaclone/presentation/pages/Chat/chats_page.dart';
 import 'package:instaclone/presentation/pages/Dashboard/camera_page.dart';
 import 'package:instaclone/presentation/pages/Dashboard/dashboard_page.dart';
@@ -50,7 +51,8 @@ class _InitialPageState extends State<InitialPage>
     // update the users online status
     ChatApis.updateActiveStatus(true);
     SystemChannels.lifecycle.setMessageHandler((message) {
-      if (ChatApis.auth.currentUser != null) {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
         if (message.toString().contains('resume')) {
           ChatApis.updateActiveStatus(true);
         }

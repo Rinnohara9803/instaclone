@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:instaclone/apis/chat_apis.dart';
 import 'package:instaclone/presentation/pages/Home/view_stories.dart';
 import 'package:instaclone/presentation/pages/Home/widgets/user_stories.dart';
 import 'package:instaclone/providers/profile_provider.dart';
 import 'package:instaclone/providers/user_posts_provider.dart';
+import 'package:instaclone/providers/user_stories_provider.dart';
 import 'package:provider/provider.dart';
 import '../../resources/constants/sizedbox_constants.dart';
 import '../UserPosts/widgets/user_post_widget.dart';
@@ -24,6 +26,19 @@ class _HomePageState extends State<HomePage>
 
   Future<void>? getLatestPosts;
 
+  // Future<void> refreshHomePage() async {
+  //   await Provider.of<UserStoriesProvider>(context, listen: false)
+  //       .fetchFollowingsStories()
+  //       .then((value) {
+  //     Provider.of<UserPostsProvider>(context, listen: false)
+  //         .fetchLatestPosts()
+  //         .then((value) {
+  //       Provider.of<UserStoriesProvider>(context, listen: false)
+  //           .fetchMyStory(ChatApis.user!.uid);
+  //     });
+  //   });
+  // }
+
   @override
   void initState() {
     getLatestPosts = Provider.of<UserPostsProvider>(context, listen: false)
@@ -38,7 +53,7 @@ class _HomePageState extends State<HomePage>
       color: Colors.white,
       backgroundColor: Colors.black,
       onRefresh: () async {
-        await Provider.of<UserPostsProvider>(context, listen: false)
+        Provider.of<UserPostsProvider>(context, listen: false)
             .fetchLatestPosts();
       },
       child: Scaffold(

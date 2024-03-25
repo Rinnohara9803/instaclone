@@ -1,15 +1,36 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:instaclone/models/story.dart';
-import 'package:instaclone/presentation/pages/Home/view_stories.dart';
+import 'package:instaclone/apis/chat_apis.dart';
+import 'package:instaclone/presentation/pages/Home/widgets/add_story_widget.dart';
 import 'package:instaclone/presentation/pages/Home/widgets/story_shimmer_widget.dart';
-import 'package:instaclone/presentation/resources/constants/sizedbox_constants.dart';
+import 'package:instaclone/presentation/pages/Home/widgets/user_story_widget.dart';
 import 'package:instaclone/providers/user_stories_provider.dart';
 import 'package:provider/provider.dart';
 
-class TheStories extends StatelessWidget {
+class TheStories extends StatefulWidget {
   const TheStories({
-    super.key,
-  });
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  State<TheStories> createState() => _TheStoriesState();
+}
+
+class _TheStoriesState extends State<TheStories> {
+  Future<void> fetchStories() async {
+    final id = FirebaseAuth.instance.currentUser!.uid;
+    try {
+      await Provider.of<UserStoriesProvider>(context, listen: false)
+          .fetchFollowingsStories()
+          .then((value) {
+        Provider.of<UserStoriesProvider>(context, listen: false)
+            .fetchMyStory(id);
+      });
+    } catch (e) {
+      return Future.error(e.toString());
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +38,7 @@ class TheStories extends StatelessWidget {
       padding: const EdgeInsets.symmetric(
         horizontal: 10,
       ),
-      height: 120,
+      height: MediaQuery.of(context).size.height * 0.13,
       width: double.infinity,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -25,113 +46,45 @@ class TheStories extends StatelessWidget {
         children: [
           Expanded(
             child: FutureBuilder(
-                future: Provider.of<UserStoriesProvider>(context, listen: false)
-                    .fetchFollowingsStories(),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const StoryShimmerWidget();
-                  } else {
-                    return Consumer<UserStoriesProvider>(
-                        builder: (context, storyData, _) {
+              future: fetchStories(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const StoryShimmerWidget();
+                } else {
+                  return Consumer<UserStoriesProvider>(
+                    builder: (context, storyData, _) {
                       if (storyData.followingsStories.isEmpty) {
                         return const Center(
                           child: Text(
-                            'No Stories',
+                            'No Stories   ',
                             textAlign: TextAlign.start,
                           ),
                         );
                       } else {
-                        return ListView.builder(
+                        return SingleChildScrollView(
                           scrollDirection: Axis.horizontal,
-                          itemCount: storyData.followingsStories.length,
-                          itemBuilder: (context, index) {
-                            return ChangeNotifierProvider.value(
-                              value: storyData.followingsStories[index],
-                              child: UserStoryWidget(
-                                index: index,
-                              ),
-                            );
-                          },
+                          child: Row(
+                            children: [
+                              if (storyData.myStory == null)
+                                const AddStoryWidget(),
+                              ...storyData.followingsStories.map((e) {
+                                return ChangeNotifierProvider.value(
+                                  value: e,
+                                  child: UserStoryWidget(
+                                    index:
+                                        storyData.followingsStories.indexOf(e),
+                                  ),
+                                );
+                              }),
+                            ],
+                          ),
                         );
                       }
-                    });
-                  }
-                }),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class UserStoryWidget extends StatelessWidget {
-  final int index;
-  const UserStoryWidget({
-    super.key,
-    required this.index,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final userStory = Provider.of<UserStory>(context);
-    return Container(
-      width: 80,
-      decoration: const BoxDecoration(
-        shape: BoxShape.circle,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          GestureDetector(
-            onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => MoreStories(
-                    storyIndex: index,
-                  ),
-                ),
-              );
-            },
-            child: Container(
-              height: 71,
-              width: 71,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: userStory.isViewedCompletely
-                      ? [
-                          Colors.grey,
-                          Colors.black12,
-                        ]
-                      : [
-                          Colors.amber,
-                          Colors.red,
-                        ],
-                ),
-              ),
-              child: Center(
-                child: CircleAvatar(
-                  radius: 34,
-                  backgroundColor: Theme.of(context).primaryColor,
-                  child: CircleAvatar(
-                    radius: 31,
-                    backgroundImage: NetworkImage(
-                      userStory.user.profileImage,
-                    ),
-                  ),
-                ),
-              ),
+                    },
+                  );
+                }
+              },
             ),
-          ),
-          SizedBoxConstants.sizedboxh5,
-          Text(
-            userStory.user.userName,
-            style: Theme.of(context).textTheme.bodySmall,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
           ),
         ],
       ),

@@ -10,7 +10,6 @@ class ProfileProvider with ChangeNotifier {
   Future<void> fetchProfile() async {
     final user = FirebaseAuth.instance.currentUser;
     final userId = user?.uid;
-    print(userId);
     try {
       await FirebaseFirestore.instance
           .collection('users')

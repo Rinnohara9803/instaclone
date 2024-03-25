@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:instaclone/presentation/pages/Profile/edit_profile_page.dart';
 import 'package:instaclone/presentation/pages/Profile/widgets/open_settings_widget.dart';
 import 'package:instaclone/presentation/pages/Profile/widgets/profile_data_widget.dart';
@@ -48,6 +49,7 @@ class _ProfilePageState extends State<ProfilePage>
 
   @override
   Widget build(BuildContext context) {
+    final user = FirebaseAuth.instance.currentUser;
     super.build(context);
     return SafeArea(
       child: DefaultTabController(
@@ -78,7 +80,7 @@ class _ProfilePageState extends State<ProfilePage>
                         const CustomPopUpMenuButton(),
                       ],
                     ),
-                    if (widget.chatUser.userId != UserApis.user!.uid)
+                    if (widget.chatUser.userId != user!.uid)
                       Row(
                         children: [
                           IconButton(
@@ -95,7 +97,7 @@ class _ProfilePageState extends State<ProfilePage>
                           ),
                         ],
                       ),
-                    if (widget.chatUser.userId == UserApis.user!.uid)
+                    if (widget.chatUser.userId == user.uid)
                       Row(
                         children: [
                           IconButton(
@@ -265,7 +267,7 @@ class _ProfilePageState extends State<ProfilePage>
                                 ),
                               ),
                               SizedBoxConstants.sizedboxh20,
-                              if (widget.chatUser.userId == UserApis.user!.uid)
+                              if (widget.chatUser.userId == user.uid)
                                 Row(
                                   children: [
                                     Expanded(
@@ -335,7 +337,7 @@ class _ProfilePageState extends State<ProfilePage>
                                     ),
                                   ],
                                 ),
-                              if (widget.chatUser.userId != UserApis.user!.uid)
+                              if (widget.chatUser.userId != user.uid)
                                 StreamBuilder(
                                   stream: UserApis.getAllFollowings(
                                       UserApis.user!.uid),

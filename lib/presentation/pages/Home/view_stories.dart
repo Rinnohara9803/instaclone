@@ -47,8 +47,6 @@ class _MoreStoriesState extends State<MoreStories>
   }
 
   void _listener() {
-    print('init listener');
-    print(_pageController.page);
     _pageNotifier.value = _pageController.page!;
   }
 

@@ -8,33 +8,28 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
 class ChatApis {
-  // auth instance
-  static FirebaseAuth auth = FirebaseAuth.instance;
-
   // firestore instance
   static FirebaseFirestore firestore = FirebaseFirestore.instance;
 
   // storage instance
   static FirebaseStorage storage = FirebaseStorage.instance;
 
-  // current authenticated user
-  static final user = auth.currentUser;
-
   // all-users snapshot
   static Stream<QuerySnapshot<Map<String, dynamic>>> getAllUsers() {
+    final userId = FirebaseAuth.instance.currentUser!.uid;
     return firestore
         .collection('users')
-        .where('userId', isNotEqualTo: user!.uid)
+        .where('userId', isNotEqualTo: userId)
         .snapshots();
   }
 
   // followings snapshot
 
   // get a unique conversation id between two chat-users
-  static String getConversationId(String id) =>
-      user!.uid.hashCode <= id.hashCode
-          ? '${user!.uid}_$id'
-          : '${id}_${user!.uid}';
+  static String getConversationId(String id) {
+    final userId = FirebaseAuth.instance.currentUser!.uid;
+    return userId.hashCode <= id.hashCode ? '${userId}_$id' : '${id}_${userId}';
+  }
 
   // all messages snapshot
   static Stream<QuerySnapshot<Map<String, dynamic>>> getAllMessages(
@@ -52,13 +47,14 @@ class ChatApis {
       ChatMessageType messageType,
       ChatMessageType replyMessageType) async {
     final time = DateTime.now().millisecondsSinceEpoch.toString();
+    final userId = FirebaseAuth.instance.currentUser!.uid;
 
     final ChatMessage message = ChatMessage(
       toId: chatUser.userId,
       read: '',
       message: msg,
       type: messageType,
-      fromId: user!.uid,
+      fromId: userId,
       sent: time,
       replyText: replyText,
       videoChat: VideoChat(id: '', duration: '', message: ''),
@@ -206,15 +202,17 @@ class ChatApis {
 
   // profile info snapshot
   static Stream<QuerySnapshot<Map<String, dynamic>>> getProfileInfo() {
+    final userId = FirebaseAuth.instance.currentUser!.uid;
     return firestore
         .collection('users')
-        .where('userId', isEqualTo: user!.uid)
+        .where('userId', isEqualTo: userId)
         .snapshots();
   }
 
   // update online status of user
   static Future<void> updateActiveStatus(bool isOnline) async {
-    firestore.collection('users').doc(user!.uid).update({
+    final userId = FirebaseAuth.instance.currentUser!.uid;
+    firestore.collection('users').doc(userId).update({
       'isOnline': isOnline,
       'lastActive': DateTime.now().millisecondsSinceEpoch.toString(),
       // 'push_token': me.pushToken,

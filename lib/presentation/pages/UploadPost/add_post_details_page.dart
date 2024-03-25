@@ -98,6 +98,7 @@ class _AddPostDetailsPageState extends State<AddPostDetailsPage> {
     });
     try {
       final postId = DateTime.now().millisecondsSinceEpoch.toString();
+      final userId = FirebaseAuth.instance.currentUser!.uid;
       await getImageUrls().then((value) {
         Provider.of<UserPostsProvider>(context, listen: false).addPost(
           UserPostModel(
@@ -107,7 +108,7 @@ class _AddPostDetailsPageState extends State<AddPostDetailsPage> {
             likes: [],
             bookmarks: [],
             caption: _captionController.text,
-            userId: UserApis.user!.uid,
+            userId: userId,
             location: theLocation,
           ),
         );

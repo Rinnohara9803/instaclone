@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:instaclone/presentation/pages/Chat/chats_page.dart';
@@ -115,7 +116,8 @@ class _DashboardPageState extends State<DashboardPage>
     super.initState();
     ChatApis.updateActiveStatus(true);
     SystemChannels.lifecycle.setMessageHandler((message) {
-      if (ChatApis.auth.currentUser != null) {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
         if (message.toString().contains('resume')) {
           ChatApis.updateActiveStatus(true);
         }

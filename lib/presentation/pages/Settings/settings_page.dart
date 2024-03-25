@@ -1,7 +1,9 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:instaclone/presentation/pages/Login/login_page.dart';
 import 'package:instaclone/presentation/pages/Register/register_with_email_page.dart';
 import 'package:instaclone/presentation/pages/Settings/dark_mode_page.dart';
 import 'package:flutter/material.dart';
+import 'package:instaclone/services/auth_service.dart';
 
 class SettingsWidgetModel {
   final String label;
@@ -50,9 +52,11 @@ class _SettingsPageState extends State<SettingsPage> {
       SettingsWidgetModel(
         label: 'Log Out',
         iconData: Icons.logout,
-        onTap: () {
-          Navigator.of(context)
-              .pushNamedAndRemoveUntil(LoginPage.routename, (route) => false);
+        onTap: () async {
+          await AuthService.logOut().then((value) {
+            Navigator.of(context)
+                .pushNamedAndRemoveUntil(LoginPage.routename, (route) => false);
+          });
         },
       ),
     ];
