@@ -4,6 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'package:instaclone/presentation/pages/Chat/chats_page.dart';
 import 'package:instaclone/presentation/pages/Profile/profile_page.dart';
 import 'package:instaclone/presentation/pages/UploadPost/select_video_page.dart';
+import 'package:instaclone/presentation/pages/UserReels/latest_reels_page.dart';
 import 'package:instaclone/presentation/resources/themes_manager.dart';
 import 'package:instaclone/providers/profile_provider.dart';
 import 'package:flutter/material.dart';
@@ -18,8 +19,15 @@ import 'widgets/custom_popup_menubutton.dart';
 
 class DashboardPage extends StatefulWidget {
   final Function navigateToChatsPage;
+  final Function navigateToPostPage;
+  final Function navigateBackToHomePage;
   static const String routename = '/dashboard-page';
-  const DashboardPage({super.key, required this.navigateToChatsPage});
+  const DashboardPage({
+    super.key,
+    required this.navigateToChatsPage,
+    required this.navigateToPostPage,
+    required this.navigateBackToHomePage,
+  });
 
   @override
   State<DashboardPage> createState() => _DashboardPageState();
@@ -50,7 +58,7 @@ class _DashboardPageState extends State<DashboardPage>
       var permission = await Permission.storage.request();
       if (permission == PermissionStatus.granted) {
         // ignore: use_build_context_synchronously
-        Navigator.of(context).pushNamed(SelectImagePage.routename);
+        widget.navigateToPostPage();
       } else {
         throw 'Photos access denied.';
       }
@@ -59,55 +67,6 @@ class _DashboardPageState extends State<DashboardPage>
         _selectedIndex = index;
         _pageController.jumpToPage(_selectedIndex);
       });
-    }
-  }
-
-  // conditional app bars for different page views
-  Widget conditionalAppBars() {
-    if (_selectedIndex == 0) {
-      return Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 20,
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(
-                  'instaclone',
-                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(),
-                ),
-                const CustomPopUpMenuButton(),
-              ],
-            ),
-            Row(
-              children: [
-                const Icon(
-                  Icons.favorite_outline,
-                ),
-                const SizedBox(
-                  width: 20,
-                ),
-                GestureDetector(
-                  onTap: () {
-                    widget.navigateToChatsPage();
-                  },
-                  child: const Icon(
-                    Icons.message_outlined,
-                  ),
-                ),
-                const SizedBox(
-                  width: 10,
-                ),
-              ],
-            ),
-          ],
-        ),
-      );
-    } else {
-      return Container();
     }
   }
 
@@ -137,8 +96,6 @@ class _DashboardPageState extends State<DashboardPage>
       child: Scaffold(
         body: Column(
           children: [
-            conditionalAppBars(),
-
             // page view of 5 pages namely: home,search,add-post,reels and profile
             Expanded(
               child: PageView(
@@ -152,7 +109,9 @@ class _DashboardPageState extends State<DashboardPage>
                 },
                 children: [
                   // home page
-                  const HomePage(),
+                  HomePage(
+                    navigateToChatsPage: widget.navigateToChatsPage,
+                  ),
 
                   // search-users page
                   SearchPage(
@@ -163,8 +122,7 @@ class _DashboardPageState extends State<DashboardPage>
                   const SizedBox(),
 
                   // reels page
-                  const Page4(),
-
+                  const LatestReelsPage(),
                   // profile page
                   ProfilePage(
                     chatUser: Provider.of<ProfileProvider>(context).chatUser,

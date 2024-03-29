@@ -54,10 +54,22 @@ class _TheStoriesState extends State<TheStories> {
                   return Consumer<UserStoriesProvider>(
                     builder: (context, storyData, _) {
                       if (storyData.followingsStories.isEmpty) {
-                        return const Center(
-                          child: Text(
-                            'No Stories   ',
-                            textAlign: TextAlign.start,
+                        return SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Row(
+                            children: [
+                              if (storyData.myStory == null)
+                                const AddStoryWidget(),
+                              ...storyData.followingsStories.map((e) {
+                                return ChangeNotifierProvider.value(
+                                  value: e,
+                                  child: UserStoryWidget(
+                                    index:
+                                        storyData.followingsStories.indexOf(e),
+                                  ),
+                                );
+                              }),
+                            ],
                           ),
                         );
                       } else {

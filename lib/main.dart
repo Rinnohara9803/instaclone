@@ -6,13 +6,12 @@ import 'package:instaclone/presentation/pages/Dashboard/initial_page.dart';
 import 'package:instaclone/presentation/pages/Register/register_with_email_page.dart';
 import 'package:instaclone/presentation/pages/Register/register_with_phone_page_one.dart';
 import 'package:instaclone/presentation/pages/Splash/splash_page.dart';
-import 'package:instaclone/presentation/pages/UploadPost/select_image_page.dart';
-import 'package:instaclone/presentation/pages/UploadPost/select_video_page.dart';
 import 'package:instaclone/presentation/pages/Verify-Email/verify_email_page.dart';
 import 'package:instaclone/providers/chat_details_provider.dart';
 import 'package:instaclone/providers/profile_data_provider.dart';
 import 'package:instaclone/providers/profile_provider.dart';
 import 'package:instaclone/providers/user_posts_provider.dart';
+import 'package:instaclone/providers/user_reels_provider.dart';
 import 'package:instaclone/providers/user_stories_provider.dart';
 import 'package:instaclone/providers/video_provider.dart';
 import 'package:provider/provider.dart';
@@ -33,7 +32,7 @@ Future<void> main() async {
 
   // ZegoUIKitPrebuiltCallInvitationService().setNavigatorKey(navigatorKey);
 
-  // ZegoUIKit().initLog().then((value) {
+  // ZegoUIKit().initLog().then((value) {d
   //   ///  Call the `useSystemCallingUI` method
   //   ZegoUIKitPrebuiltCallInvitationService().useSystemCallingUI(
   //     [ZegoUIKitSignalingPlugin()],
@@ -78,6 +77,9 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider<UserStoriesProvider>(
           create: (context) => UserStoriesProvider(),
         ),
+        ChangeNotifierProvider<ReelsProvider>(
+          create: (context) => ReelsProvider(),
+        ),
       ],
       child: Consumer<ThemeProvider>(
         builder: (context, themeData, _) {
@@ -100,8 +102,6 @@ class MyApp extends StatelessWidget {
                   const RegisterWithPhonePageOne(),
               VerifyEmailPage.routename: (context) => const VerifyEmailPage(),
               InitialPage.routename: (context) => const InitialPage(),
-              SelectImagePage.routename: (context) => const SelectImagePage(),
-              SelectVideoPage.routename: (context) => const SelectVideoPage(),
               ChatDetails.routename: (context) => const ChatDetails(),
             },
           );

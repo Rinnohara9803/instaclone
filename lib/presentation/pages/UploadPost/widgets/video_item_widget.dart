@@ -17,14 +17,14 @@ class VideoItemWidget extends StatefulWidget {
 
 class _VideoItemWidgetState extends State<VideoItemWidget> {
   VideoPlayerController? _controller;
-  // Future<void>? _initializeVideoPlayerFuture;
+  Future<void>? _initializeVideoPlayerFuture;
 
   @override
   void initState() {
     _controller = VideoPlayerController.file(
       File(widget.videoFile.path),
     );
-    _controller!.initialize();
+    _initializeVideoPlayerFuture = _controller!.initialize();
     super.initState();
   }
 
@@ -52,7 +52,24 @@ class _VideoItemWidgetState extends State<VideoItemWidget> {
       color: Colors.grey,
       child: Stack(
         children: [
-          VideoPlayer(_controller!),
+          FutureBuilder(
+            future: _initializeVideoPlayerFuture,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.done) {
+                return VideoPlayer(
+                  _controller!,
+                );
+              } else if (snapshot.hasError) {
+                return Container(
+                  color: Colors.grey,
+                );
+              } else {
+                return Container(
+                  color: Colors.grey,
+                );
+              }
+            },
+          ),
           Positioned(
             bottom: 2,
             right: 2,

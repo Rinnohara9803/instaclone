@@ -475,7 +475,7 @@ class _ChatPageState extends State<ChatPage> {
 
   Widget _appBar() {
     return StreamBuilder(
-      stream: ChatApis.getUserInfo(widget.user),
+      stream: ChatApis.getUserInfo(widget.user.userId),
       builder: (context, snapshot) {
         final data = snapshot.data?.docs;
         final list =

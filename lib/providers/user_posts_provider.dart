@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:instaclone/apis/user_apis.dart';
 import 'package:instaclone/models/user_post.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -40,7 +39,6 @@ class UserPostsProvider with ChangeNotifier {
   // fetch posts with user's id
   Future<void> fetchAllPostsOfUserWithLimit(
       String userId, int limitValue) async {
-    print('fetching user posts');
     try {
       List<UserPostModel> listOfPosts = [];
       await firestore
@@ -62,17 +60,12 @@ class UserPostsProvider with ChangeNotifier {
       });
       _userPosts = listOfPosts;
       notifyListeners();
-      print(_userPosts.length);
-      print(_userPosts[0]);
     } catch (e) {
-      print('error fetching user posts');
-      print(e.toString());
       return Future.error(e.toString());
     }
   }
 
   Future<void> fetchAllPostsOfUser(String userId) async {
-    print('here');
     try {
       List<UserPostModel> listOfPosts = [];
       await firestore
@@ -127,7 +120,6 @@ class UserPostsProvider with ChangeNotifier {
       _latestPosts = listOfPosts;
       notifyListeners();
     } catch (e) {
-      print(e.toString());
       return Future.error(e.toString());
     }
   }

@@ -33,7 +33,7 @@ class UserStoriesProvider with ChangeNotifier {
   DateTime getADayAgoTimestamp() {
     return DateTime.now().subtract(
       const Duration(
-        hours: 50,
+        hours: 24,
       ),
     );
   }

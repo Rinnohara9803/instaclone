@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_storage_path/flutter_storage_path.dart';
 import 'package:flutter/material.dart';
 import 'package:instaclone/presentation/pages/UploadPost/add_post_details_page.dart';
@@ -11,17 +10,18 @@ import 'package:instaclone/presentation/resources/themes_manager.dart';
 import 'package:provider/provider.dart';
 import '../../../models/video_file_model.dart';
 
-class SelectVideoPage extends StatefulWidget {
-  static const String routename = '/select-video-page';
-  const SelectVideoPage({
-    Key? key,
-  }) : super(key: key);
+class SelectVideoWidget extends StatefulWidget {
+  final Function navigateBack;
+  final Function setImages;
+  const SelectVideoWidget(
+      {Key? key, required this.navigateBack, required this.setImages})
+      : super(key: key);
 
   @override
-  _SelectVideoPageState createState() => _SelectVideoPageState();
+  _SelectVideoWidgetState createState() => _SelectVideoWidgetState();
 }
 
-class _SelectVideoPageState extends State<SelectVideoPage> {
+class _SelectVideoWidgetState extends State<SelectVideoWidget> {
   List<VideoFileModel>? videoFileFolders;
   VideoPlayerController? _controller;
   Future<void>? _initializeVideoPlayerFuture;
@@ -82,207 +82,204 @@ class _SelectVideoPageState extends State<SelectVideoPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: Column(
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  IconButton(
-                    icon: const Icon(Icons.clear),
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      _controller!.pause();
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => AddPostDetailsPage(
-                              images: const [], videos: selectedFiles),
-                        ),
-                      );
-                    },
-                    child: const Text(
-                      'Next',
-                      style: TextStyle(
-                        color: Colors.blue,
+    return Material(
+      child: Column(
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                IconButton(
+                  icon: const Icon(Icons.clear),
+                  onPressed: () {
+                    widget.navigateBack();
+                  },
+                ),
+                TextButton(
+                  onPressed: () {
+                    _controller!.pause();
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => AddPostDetailsPage(
+                            images: const [], videos: selectedFiles),
                       ),
+                    );
+                  },
+                  child: const Text(
+                    'Next',
+                    style: TextStyle(
+                      color: Colors.blue,
                     ),
-                  )
-                ],
-              ),
+                  ),
+                )
+              ],
             ),
-            Stack(
-              children: [
-                SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.45,
-                  // width: double.infinity,
-                  child: video != null
-                      ? GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              if (_controller!.value.isPlaying) {
-                                _controller!.pause();
-                              } else {
-                                _controller!.play();
-                              }
-                            });
+          ),
+          Stack(
+            children: [
+              SizedBox(
+                height: MediaQuery.of(context).size.height * 0.45,
+                // width: double.infinity,
+                child: video != null
+                    ? GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            if (_controller!.value.isPlaying) {
+                              _controller!.pause();
+                            } else {
+                              _controller!.play();
+                            }
+                          });
+                        },
+                        child: FutureBuilder(
+                          future: _initializeVideoPlayerFuture,
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.done) {
+                              return AspectRatio(
+                                aspectRatio: _controller!.value.aspectRatio,
+                                child: VideoPlayer(
+                                  _controller!,
+                                ),
+                              );
+                            } else {
+                              return Container(
+                                color: Colors.grey,
+                              );
+                            }
                           },
-                          child: FutureBuilder(
-                            future: _initializeVideoPlayerFuture,
-                            builder: (context, snapshot) {
-                              if (snapshot.connectionState ==
-                                  ConnectionState.done) {
-                                return AspectRatio(
-                                  aspectRatio: _controller!.value.aspectRatio,
-                                  child: VideoPlayer(
-                                    _controller!,
-                                  ),
-                                );
-                              } else {
-                                return Container(
-                                  color: Colors.grey,
-                                );
-                              }
+                        ),
+                      )
+                    : Container(),
+              ),
+            ],
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                DropdownButtonHideUnderline(
+                  child: DropdownButton<VideoFileModel>(
+                    iconEnabledColor:
+                        Provider.of<ThemeProvider>(context).isLightTheme
+                            ? Colors.black
+                            : Colors.white,
+                    items: getItems(),
+                    onChanged: (VideoFileModel? d) {
+                      setState(() {
+                        selectedVideoFolder = d;
+                        video = d!.files[0];
+                      });
+                      _controller?.dispose();
+                      _controller = VideoPlayerController.file(
+                        File(video!.path),
+                      );
+                      _initializeVideoPlayerFuture = _controller!.initialize();
+                      _controller!.play();
+                    },
+                    value: selectedVideoFolder,
+                    dropdownColor:
+                        Provider.of<ThemeProvider>(context).isLightTheme
+                            ? Colors.white
+                            : const Color.fromARGB(255, 72, 71, 71),
+                  ),
+                ),
+                Row(
+                  children: [
+                    selectMultipleVideos
+                        ? TextButton.icon(
+                            label: Text(
+                              'Select a video',
+                              style: Theme.of(context).textTheme.bodyMedium,
+                            ),
+                            onPressed: () {
+                              toggleSelectMultipleImages();
                             },
+                            icon: const Icon(
+                              Icons.image,
+                            ),
+                          )
+                        : TextButton.icon(
+                            label: Text(
+                              'Select multiple videos',
+                              style: Theme.of(context).textTheme.bodyMedium,
+                            ),
+                            onPressed: () {
+                              toggleSelectMultipleImages();
+                            },
+                            icon: const Icon(
+                              Icons.grid_on_sharp,
+                            ),
                           ),
-                        )
-                      : Container(),
+                    IconButton(
+                      onPressed: () {
+                        widget.setImages();
+                      },
+                      icon: const Icon(
+                        Icons.camera_alt,
+                      ),
+                    )
+                  ],
                 ),
               ],
             ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  DropdownButtonHideUnderline(
-                    child: DropdownButton<VideoFileModel>(
-                      iconEnabledColor:
-                          Provider.of<ThemeProvider>(context).isLightTheme
-                              ? Colors.black
-                              : Colors.white,
-                      items: getItems(),
-                      onChanged: (VideoFileModel? d) {
-                        setState(() {
-                          selectedVideoFolder = d;
-                          video = d!.files[0];
-                        });
-                        _controller?.dispose();
-                        _controller = VideoPlayerController.file(
-                          File(video!.path),
-                        );
-                        _initializeVideoPlayerFuture =
-                            _controller!.initialize();
-                        _controller!.play();
-                      },
-                      value: selectedVideoFolder,
-                      dropdownColor:
-                          Provider.of<ThemeProvider>(context).isLightTheme
-                              ? Colors.white
-                              : const Color.fromARGB(255, 72, 71, 71),
+          ),
+          selectedVideoFolder == null
+              ? Container()
+              : Expanded(
+                  child: GridView.builder(
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 4,
+                      crossAxisSpacing: 2,
+                      mainAxisSpacing: 2,
                     ),
-                  ),
-                  Row(
-                    children: [
-                      selectMultipleVideos
-                          ? TextButton.icon(
-                              label: Text(
-                                'Select a video',
-                                style: Theme.of(context).textTheme.bodyMedium,
-                              ),
-                              onPressed: () {
-                                toggleSelectMultipleImages();
-                              },
-                              icon: const Icon(
-                                Icons.image,
-                              ),
-                            )
-                          : TextButton.icon(
-                              label: Text(
-                                'Select multiple videos',
-                                style: Theme.of(context).textTheme.bodyMedium,
-                              ),
-                              onPressed: () {
-                                toggleSelectMultipleImages();
-                              },
-                              icon: const Icon(
-                                Icons.grid_on_sharp,
-                              ),
-                            ),
-                      IconButton(
-                        onPressed: () {
-                          Navigator.of(context)
-                              .pushReplacementNamed(SelectImagePage.routename);
+                    itemBuilder: (_, i) {
+                      var file = selectedVideoFolder!.files[i];
+                      bool isSelected = selectMultipleVideos
+                          ? selectedFiles.contains(file)
+                          : file == video;
+                      return GestureDetector(
+                        onTap: () {
+                          if (isSelected && selectedFiles.length == 1) {
+                            return;
+                          }
+                          if (isSelected && selectMultipleVideos) {
+                            setState(() {
+                              selectedFiles.remove(file);
+                            });
+                          }
+                          if (selectMultipleVideos && !isSelected) {
+                            setState(() {
+                              selectedFiles.add(file);
+                              video = file;
+                            });
+                          } else {
+                            setState(() {
+                              video = file;
+                              _controller?.dispose();
+                              _controller = VideoPlayerController.file(
+                                File(file.path),
+                              );
+                              _initializeVideoPlayerFuture =
+                                  _controller!.initialize();
+                              _controller!.play();
+                            });
+                          }
                         },
-                        icon: const Icon(
-                          Icons.camera_alt,
+                        child: VideoItemWidget(
+                          videoFile: file,
+                          isSelected: isSelected,
                         ),
-                      )
-                    ],
+                      );
+                    },
+                    itemCount: selectedVideoFolder!.files.length,
                   ),
-                ],
-              ),
-            ),
-            selectedVideoFolder == null
-                ? Container()
-                : Expanded(
-                    child: GridView.builder(
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 4,
-                        crossAxisSpacing: 2,
-                        mainAxisSpacing: 2,
-                      ),
-                      itemBuilder: (_, i) {
-                        var file = selectedVideoFolder!.files[i];
-                        bool isSelected = selectMultipleVideos
-                            ? selectedFiles.contains(file)
-                            : file == video;
-                        return GestureDetector(
-                          onTap: () {
-                            if (isSelected && selectedFiles.length == 1) {
-                              return;
-                            }
-                            if (isSelected && selectMultipleVideos) {
-                              setState(() {
-                                selectedFiles.remove(file);
-                              });
-                            }
-                            if (selectMultipleVideos && !isSelected) {
-                              setState(() {
-                                selectedFiles.add(file);
-                                video = file;
-                              });
-                            } else {
-                              setState(() {
-                                video = file;
-                                _controller?.dispose();
-                                _controller = VideoPlayerController.file(
-                                  File(file.path),
-                                );
-                                _initializeVideoPlayerFuture =
-                                    _controller!.initialize();
-                                _controller!.play();
-                              });
-                            }
-                          },
-                          child: VideoItemWidget(
-                            videoFile: file,
-                            isSelected: isSelected,
-                          ),
-                        );
-                      },
-                      itemCount: selectedVideoFolder!.files.length,
-                    ),
-                  )
-          ],
-        ),
+                )
+        ],
       ),
     );
   }

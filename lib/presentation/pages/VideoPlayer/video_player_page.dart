@@ -12,7 +12,7 @@ class VideoPlayingPage extends StatefulWidget {
 
   const VideoPlayingPage(this.post, this.videoUrl);
 
-  static const String pathName = '/';
+  static const String pathName = '/video-player-page';
 
   @override
   _VideoPlayingPageState createState() => _VideoPlayingPageState();
@@ -281,7 +281,7 @@ class _VideoPlayingPageState extends State<VideoPlayingPage>
                 left: 0,
                 right: 0,
                 child: PostUserDetails(
-                  post: widget.post,
+                  userId: widget.post.userId,
                 ),
               ),
               Positioned(

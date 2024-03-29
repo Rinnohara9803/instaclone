@@ -184,10 +184,10 @@ class ChatApis {
 
   // user info snapshot
   static Stream<QuerySnapshot<Map<String, dynamic>>> getUserInfo(
-      ChatUser chatUser) {
+      String userId) {
     return firestore
         .collection('users')
-        .where('userId', isEqualTo: chatUser.userId)
+        .where('userId', isEqualTo: userId)
         .snapshots();
   }
 

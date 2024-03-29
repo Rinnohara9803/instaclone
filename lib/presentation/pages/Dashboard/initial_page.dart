@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:instaclone/presentation/pages/AddMedia/add_media_page.dart';
 import 'package:instaclone/presentation/pages/Chat/chats_page.dart';
-import 'package:instaclone/presentation/pages/Dashboard/camera_page.dart';
 import 'package:instaclone/presentation/pages/Dashboard/dashboard_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -24,8 +24,11 @@ class _InitialPageState extends State<InitialPage>
   }
 
   void navigateBackToHomePage() {
-    print('back');
     _tabController!.animateTo(1);
+  }
+
+  void navigateToPostPage() {
+    _tabController!.animateTo(0);
   }
 
   // pages for tab-bar-view
@@ -35,12 +38,14 @@ class _InitialPageState extends State<InitialPage>
   void initState() {
     pages = [
       // open-camera page
-      CameraPage(
+      AddPostOrReelsOrStoryPage(
         navigateBack: navigateBackToHomePage,
       ),
       // dashboard page
       DashboardPage(
         navigateToChatsPage: navigateToChatsPage,
+        navigateToPostPage: navigateToPostPage,
+        navigateBackToHomePage: navigateBackToHomePage,
       ),
 
       // chats page
@@ -74,16 +79,12 @@ class _InitialPageState extends State<InitialPage>
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: Scaffold(
-        body: DefaultTabController(
-          initialIndex: 1,
-          length: pages!.length,
-          child: Scaffold(
-            body: TabBarView(
-              controller: _tabController,
-              children: pages!,
-            ),
-          ),
+      child: DefaultTabController(
+        initialIndex: 1,
+        length: pages!.length,
+        child: TabBarView(
+          controller: _tabController,
+          children: pages!,
         ),
       ),
     );

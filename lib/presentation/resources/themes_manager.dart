@@ -19,6 +19,7 @@ ThemeData getDarkApplicationTheme() {
   return ThemeData(
     // primary color
     primaryColor: Colors.black,
+    errorColor: Colors.white,
     colorScheme: const ColorScheme.dark(),
 
     // icon buttom theme
@@ -75,7 +76,7 @@ ThemeData getDarkApplicationTheme() {
     inputDecorationTheme: InputDecorationTheme(
       suffixIconColor: Colors.grey,
       prefixIconColor: Colors.grey,
-      fillColor: const Color.fromARGB(255, 53, 52, 52),
+      fillColor: Colors.transparent,
       filled: true,
       labelStyle: TextStyle(
         color: ColorsManager.white,
@@ -189,6 +190,7 @@ ThemeData getLightApplicationTheme() {
   return ThemeData(
     // primary color
     primaryColor: Colors.white,
+    errorColor: Colors.black,
     colorScheme: const ColorScheme.light(),
 
     // icon buttom theme
@@ -245,7 +247,7 @@ ThemeData getLightApplicationTheme() {
     inputDecorationTheme: InputDecorationTheme(
       suffixIconColor: Colors.grey,
       prefixIconColor: Colors.grey,
-      fillColor: Colors.black12,
+      fillColor: Colors.transparent,
       filled: true,
       labelStyle: TextStyle(
         color: ColorsManager.white,

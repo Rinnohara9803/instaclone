@@ -3,6 +3,7 @@ import 'package:instaclone/presentation/pages/Profile/edit_profile_page.dart';
 import 'package:instaclone/presentation/pages/Profile/widgets/open_settings_widget.dart';
 import 'package:instaclone/presentation/pages/Profile/widgets/profile_data_widget.dart';
 import 'package:instaclone/presentation/pages/Profile/widgets/user_posts_grid_view.dart';
+import 'package:instaclone/presentation/pages/Profile/widgets/user_reels_grid_view.dart';
 import 'package:instaclone/presentation/resources/themes_manager.dart';
 import 'package:instaclone/providers/profile_data_provider.dart';
 import 'package:instaclone/providers/user_posts_provider.dart';
@@ -43,7 +44,7 @@ class _ProfilePageState extends State<ProfilePage>
 
   @override
   void initState() {
-    getUserInfo = ChatApis.getUserInfo(widget.chatUser);
+    getUserInfo = ChatApis.getUserInfo(widget.chatUser.userId);
     super.initState();
   }
 
@@ -489,13 +490,10 @@ class _ProfilePageState extends State<ProfilePage>
                                       child: TabBarView(
                                         children: [
                                           UserPostsGridView(
-                                            chatUser: widget.chatUser,
+                                            userId: widget.chatUser.userId,
                                           ),
-                                          const Center(
-                                            child: Text(
-                                              'No reels till date',
-                                            ),
-                                          ),
+                                          UserReelsGridView(
+                                              userId: widget.chatUser.userId),
                                         ],
                                       ),
                                     ),

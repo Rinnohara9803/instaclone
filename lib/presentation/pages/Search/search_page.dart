@@ -86,6 +86,7 @@ class _SearchPageState extends State<SearchPage> {
         style: Theme.of(context).textTheme.bodySmall,
         // cursorHeight: 13,
         decoration: InputDecoration(
+          fillColor: Colors.black12,
           contentPadding: const EdgeInsets.symmetric(
             vertical: 20,
             horizontal: 15,
@@ -135,40 +136,36 @@ class _SearchPageState extends State<SearchPage> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        body: Column(
-          children: [
-            searchBar(),
-            Expanded(
-              child: _searchController.text.isEmpty
-                  ? const Center(
-                      child: Text('Find Users'),
-                    )
-                  : ListView.builder(
-                      controller: _scrollController,
-                      shrinkWrap: true,
-                      itemCount: searchResults.length,
-                      itemBuilder: (context, index) {
-                        if (searchResults.isEmpty) {
-                          return const Center(
-                            child: Text(
-                              'No users found',
-                              style: TextStyle(
-                                color: Colors.white,
-                              ),
-                            ),
-                          );
-                        }
-                        return SearchChatUserCard(
-                          chatUser: searchResults[index],
-                        );
-                      },
-                    ),
-            )
-          ],
-        ),
-      ),
+    return Column(
+      children: [
+        searchBar(),
+        Expanded(
+          child: _searchController.text.isEmpty
+              ? const Center(
+                  child: Text('Find Users'),
+                )
+              : ListView.builder(
+                  controller: _scrollController,
+                  shrinkWrap: true,
+                  itemCount: searchResults.length,
+                  itemBuilder: (context, index) {
+                    if (searchResults.isEmpty) {
+                      return const Center(
+                        child: Text(
+                          'No users found',
+                          style: TextStyle(
+                            color: Colors.white,
+                          ),
+                        ),
+                      );
+                    }
+                    return SearchChatUserCard(
+                      chatUser: searchResults[index],
+                    );
+                  },
+                ),
+        )
+      ],
     );
   }
 }

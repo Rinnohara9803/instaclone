@@ -1,4 +1,3 @@
-import 'package:instaclone/models/chat_user.dart';
 import 'package:instaclone/presentation/pages/Profile/widgets/user_post_grid_view_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -7,9 +6,9 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 import '../../../../providers/user_posts_provider.dart';
 
 class UserPostsGridView extends StatefulWidget {
-  final ChatUser chatUser;
+  final String userId;
 
-  const UserPostsGridView({super.key, required this.chatUser});
+  const UserPostsGridView({super.key, required this.userId});
 
   @override
   State<UserPostsGridView> createState() => _UserPostsGridViewState();
@@ -41,7 +40,7 @@ class _UserPostsGridViewState extends State<UserPostsGridView>
     print('refreshing');
     currentLimit = currentLimit + 12;
     await Provider.of<UserPostsProvider>(context, listen: false)
-        .fetchAllPostsOfUserWithLimit(widget.chatUser.userId, currentLimit)
+        .fetchAllPostsOfUserWithLimit(widget.userId, currentLimit)
         .then((value) {
       _refreshController.loadComplete();
     }).catchError((e) {
@@ -54,7 +53,7 @@ class _UserPostsGridViewState extends State<UserPostsGridView>
     super.build(context);
     return FutureBuilder(
       future: Provider.of<UserPostsProvider>(context, listen: false)
-          .fetchAllPostsOfUserWithLimit(widget.chatUser.userId, currentLimit),
+          .fetchAllPostsOfUserWithLimit(widget.userId, currentLimit),
       builder: (context, snapshot) {
         print('running');
         switch (snapshot.connectionState) {

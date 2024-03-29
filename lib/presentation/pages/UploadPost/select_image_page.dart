@@ -9,18 +9,21 @@ import '../../../models/image_file_model.dart';
 import '../../resources/themes_manager.dart';
 import 'apply_filters_page.dart';
 
-class SelectImagePage extends StatefulWidget {
-  static const String routename = '/select-image-page';
-  const SelectImagePage({
+class SelectImageWidget extends StatefulWidget {
+  final Function navigateBack;
+  final Function setImages;
+  const SelectImageWidget({
     super.key,
+    required this.navigateBack,
+    required this.setImages,
   });
 
   @override
   // ignore: library_private_types_in_public_api
-  _SelectImagePageState createState() => _SelectImagePageState();
+  _SelectImageWidgetState createState() => _SelectImageWidgetState();
 }
 
-class _SelectImagePageState extends State<SelectImagePage>
+class _SelectImageWidgetState extends State<SelectImageWidget>
     with SingleTickerProviderStateMixin {
   final TransformationController _transformationController =
       TransformationController();
@@ -80,219 +83,216 @@ class _SelectImagePageState extends State<SelectImagePage>
   Widget build(BuildContext context) {
     // print(selectMultipleImages);
     // print('the length of selectedFiles is ${selectedFiles.length}');
-    return SafeArea(
-      child: Scaffold(
-        body: Column(
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  IconButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                      icon: const Icon(Icons.clear)),
-                  TextButton(
+    return Material(
+      child: Column(
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                IconButton(
                     onPressed: () {
-                      if (!selectMultipleImages) {
-                        selectedFiles.clear();
-                        selectedFiles.add(image!);
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                ApplyFilterPage(imagePaths: selectedFiles),
-                          ),
-                        );
-                      } else {
-                        if (selectedFiles.isEmpty) {
-                          selectedFiles.add(image!);
-                        }
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                ApplyFilterPage(imagePaths: selectedFiles),
-                          ),
-                        );
-                      }
+                      widget.navigateBack();
                     },
-                    child: const Text(
-                      'Next',
-                      style: TextStyle(
-                        color: Colors.blue,
-                      ),
+                    icon: const Icon(Icons.clear)),
+                TextButton(
+                  onPressed: () {
+                    if (!selectMultipleImages) {
+                      selectedFiles.clear();
+                      selectedFiles.add(image!);
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              ApplyFilterPage(imagePaths: selectedFiles),
+                        ),
+                      );
+                    } else {
+                      if (selectedFiles.isEmpty) {
+                        selectedFiles.add(image!);
+                      }
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              ApplyFilterPage(imagePaths: selectedFiles),
+                        ),
+                      );
+                    }
+                  },
+                  child: const Text(
+                    'Next',
+                    style: TextStyle(
+                      color: Colors.blue,
                     ),
                   ),
-                ],
-              ),
-            ),
-            Stack(
-              children: [
-                SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.45,
-                  width: double.infinity,
-                  child: image != null
-                      ? GestureDetector(
-                          onDoubleTap: () {
-                            _toggleZoom();
-                          },
-                          child: InteractiveViewer(
-                            transformationController: _transformationController,
-                            onInteractionStart: (_) {
-                              setState(() {
-                                showGridPaper = true;
-                              });
-                            },
-                            onInteractionEnd: (_) {
-                              setState(() {
-                                showGridPaper = false;
-                              });
-                            },
-                            boundaryMargin: EdgeInsets.all(
-                              showGridPaper ? 100 : 0,
-                            ),
-                            minScale: 0.1,
-                            maxScale: 2.0,
-                            child: GridPaper(
-                              color: showGridPaper
-                                  ? Colors.black
-                                  : Colors.transparent,
-                              divisions: 1,
-                              interval: 1200,
-                              subdivisions: 9,
-                              child: Image.file(
-                                File(image!),
-                                height:
-                                    MediaQuery.of(context).size.height * 0.45,
-                                width: MediaQuery.of(context).size.width,
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                          ),
-                        )
-                      : Container(),
                 ),
               ],
             ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  // drop-down to swtich between different image folders
-                  DropdownButtonHideUnderline(
-                    child: DropdownButton<ImageFileModel>(
-                      iconEnabledColor:
-                          Provider.of<ThemeProvider>(context).isLightTheme
-                              ? Colors.black
-                              : Colors.white,
-                      items: getItems(),
-                      onChanged: (ImageFileModel? d) {
-                        assert(d!.files.isNotEmpty);
-                        image = d!.files[0];
-                        setState(() {
-                          selectedModel = d;
-                        });
-                      },
-                      value: selectedModel,
-                      dropdownColor:
-                          Provider.of<ThemeProvider>(context).isLightTheme
-                              ? Colors.white
-                              : const Color.fromARGB(255, 72, 71, 71),
-                    ),
-                  ),
-
-                  // toggling select-multiple-images button
-                  Row(
-                    children: [
-                      selectMultipleImages
-                          ? TextButton.icon(
-                              label: Text(
-                                'Select an image',
-                                style: Theme.of(context).textTheme.bodyMedium,
-                              ),
-                              onPressed: () {
-                                toggleSelectMultipleImages();
-                              },
-                              icon: const Icon(
-                                Icons.image,
-                              ),
-                            )
-                          : TextButton.icon(
-                              label: Text(
-                                'Select multiple images',
-                                style: Theme.of(context).textTheme.bodyMedium,
-                              ),
-                              onPressed: () {
-                                toggleSelectMultipleImages();
-                              },
-                              icon: const Icon(
-                                Icons.grid_on_sharp,
-                              ),
-                            ),
-                      IconButton(
-                        onPressed: () {
-                          Navigator.of(context)
-                              .pushReplacementNamed(SelectVideoPage.routename);
+          ),
+          Stack(
+            children: [
+              SizedBox(
+                height: MediaQuery.of(context).size.height * 0.45,
+                width: double.infinity,
+                child: image != null
+                    ? GestureDetector(
+                        onDoubleTap: () {
+                          _toggleZoom();
                         },
-                        icon: const Icon(
-                          Icons.video_camera_back_outlined,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-
-            // check for => selected image folder is null
-            selectedModel == null
-                ? Container()
-                // grid view of selected image folder
-                : Expanded(
-                    child: GridView.builder(
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 4,
-                        crossAxisSpacing: 2,
-                        mainAxisSpacing: 2,
-                      ),
-                      itemBuilder: (_, i) {
-                        var file = selectedModel!.files[i];
-                        bool isSelected = selectMultipleImages
-                            ? selectedFiles.contains(file)
-                            : file == image;
-
-                        return ImageShowWidget(
-                            file: file,
-                            isSelected: isSelected,
-                            onTap: () {
-                              if (isSelected && selectedFiles.length == 1) {
-                                return;
-                              }
-                              if (isSelected && selectMultipleImages) {
-                                setState(() {
-                                  selectedFiles.remove(file);
-                                });
-                              }
-                              if (selectMultipleImages && !isSelected) {
-                                setState(() {
-                                  selectedFiles.add(file);
-                                  image = file;
-                                });
-                              } else {
-                                setState(() {
-                                  image = file;
-                                });
-                              }
+                        child: InteractiveViewer(
+                          transformationController: _transformationController,
+                          onInteractionStart: (_) {
+                            setState(() {
+                              showGridPaper = true;
                             });
+                          },
+                          onInteractionEnd: (_) {
+                            setState(() {
+                              showGridPaper = false;
+                            });
+                          },
+                          boundaryMargin: EdgeInsets.all(
+                            showGridPaper ? 100 : 0,
+                          ),
+                          minScale: 0.1,
+                          maxScale: 2.0,
+                          child: GridPaper(
+                            color: showGridPaper
+                                ? Colors.black
+                                : Colors.transparent,
+                            divisions: 1,
+                            interval: 1200,
+                            subdivisions: 9,
+                            child: Image.file(
+                              File(image!),
+                              height: MediaQuery.of(context).size.height * 0.45,
+                              width: MediaQuery.of(context).size.width,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                      )
+                    : Container(),
+              ),
+            ],
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                // drop-down to swtich between different image folders
+                DropdownButtonHideUnderline(
+                  child: DropdownButton<ImageFileModel>(
+                    iconEnabledColor:
+                        Provider.of<ThemeProvider>(context).isLightTheme
+                            ? Colors.black
+                            : Colors.white,
+                    items: getItems(),
+                    onChanged: (ImageFileModel? d) {
+                      assert(d!.files.isNotEmpty);
+                      image = d!.files[0];
+                      setState(() {
+                        selectedModel = d;
+                      });
+                    },
+                    value: selectedModel,
+                    dropdownColor:
+                        Provider.of<ThemeProvider>(context).isLightTheme
+                            ? Colors.white
+                            : const Color.fromARGB(255, 72, 71, 71),
+                  ),
+                ),
+
+                // toggling select-multiple-images button
+                Row(
+                  children: [
+                    selectMultipleImages
+                        ? TextButton.icon(
+                            label: Text(
+                              'Select an image',
+                              style: Theme.of(context).textTheme.bodyMedium,
+                            ),
+                            onPressed: () {
+                              toggleSelectMultipleImages();
+                            },
+                            icon: const Icon(
+                              Icons.image,
+                            ),
+                          )
+                        : TextButton.icon(
+                            label: Text(
+                              'Select multiple images',
+                              style: Theme.of(context).textTheme.bodyMedium,
+                            ),
+                            onPressed: () {
+                              toggleSelectMultipleImages();
+                            },
+                            icon: const Icon(
+                              Icons.grid_on_sharp,
+                            ),
+                          ),
+                    IconButton(
+                      onPressed: () {
+                        widget.setImages();
                       },
-                      itemCount: selectedModel!.files.length,
+                      icon: const Icon(
+                        Icons.video_camera_back_outlined,
+                      ),
                     ),
-                  )
-          ],
-        ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+
+          // check for => selected image folder is null
+          selectedModel == null
+              ? Container()
+              // grid view of selected image folder
+              : Expanded(
+                  child: GridView.builder(
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 4,
+                      crossAxisSpacing: 2,
+                      mainAxisSpacing: 2,
+                    ),
+                    itemBuilder: (_, i) {
+                      var file = selectedModel!.files[i];
+                      bool isSelected = selectMultipleImages
+                          ? selectedFiles.contains(file)
+                          : file == image;
+
+                      return ImageShowWidget(
+                          file: file,
+                          isSelected: isSelected,
+                          onTap: () {
+                            if (isSelected && selectedFiles.length == 1) {
+                              return;
+                            }
+                            if (isSelected && selectMultipleImages) {
+                              setState(() {
+                                selectedFiles.remove(file);
+                              });
+                            }
+                            if (selectMultipleImages && !isSelected) {
+                              setState(() {
+                                selectedFiles.add(file);
+                                image = file;
+                              });
+                            } else {
+                              setState(() {
+                                image = file;
+                              });
+                            }
+                          });
+                    },
+                    itemCount: selectedModel!.files.length,
+                  ),
+                )
+        ],
       ),
     );
   }

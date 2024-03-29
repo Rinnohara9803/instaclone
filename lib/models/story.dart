@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:instaclone/apis/user_apis.dart';
 import 'package:instaclone/models/chat_user.dart';
@@ -42,14 +43,14 @@ class Story with ChangeNotifier {
         (e) => UserID.fromJson(e),
       ),
     );
-    isViewed = viewedBy.firstWhereOrNull(
-            (element) => element.userId == UserApis.user!.uid) !=
+    isViewed = viewedBy.firstWhereOrNull((element) =>
+            element.userId == FirebaseAuth.instance.currentUser!.uid) !=
         null;
   }
 
   Future<void> updateIsViewed() async {
     try {
-      viewedBy.add(UserID(userId: UserApis.user!.uid));
+      viewedBy.add(UserID(userId: FirebaseAuth.instance.currentUser!.uid));
 
       await UserApis.firestore
           .collection('stories/$userId/userstories/')

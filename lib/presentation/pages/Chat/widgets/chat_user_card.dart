@@ -38,9 +38,9 @@ class _ChatUserCardState extends State<ChatUserCard> {
           overflow: TextOverflow.ellipsis,
           maxLines: 1,
           style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-              // fontWeight: message!.read.isEmpty && message != null
-              //     ? FontWeight.normal
-              //     : FontWeight.bold,
+                fontWeight: message != null && message!.read.isEmpty
+                    ? FontWeight.bold
+                    : FontWeight.normal,
               ),
         );
       case ChatMessageType.image:
@@ -50,7 +50,11 @@ class _ChatUserCardState extends State<ChatUserCard> {
                   ? 'You sent an image.'
                   : '${widget.chatUser.userName} sent an image.'
               : 'Wave 🙌',
-          style: Theme.of(context).textTheme.bodyMedium,
+          style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                fontWeight: message != null && message!.read.isEmpty
+                    ? FontWeight.bold
+                    : FontWeight.normal,
+              ),
         );
 
       case ChatMessageType.videoChat:
@@ -60,7 +64,11 @@ class _ChatUserCardState extends State<ChatUserCard> {
                   ? 'You started a call.'
                   : '${widget.chatUser.userName} started a call.'
               : 'Wave 🙌',
-          style: Theme.of(context).textTheme.bodyMedium,
+          style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                fontWeight: message != null && message!.read.isEmpty
+                    ? FontWeight.bold
+                    : FontWeight.normal,
+              ),
         );
 
       case ChatMessageType.audio:
@@ -70,7 +78,11 @@ class _ChatUserCardState extends State<ChatUserCard> {
               : '${widget.chatUser.userName} sent a voice message.',
           overflow: TextOverflow.ellipsis,
           maxLines: 1,
-          style: Theme.of(context).textTheme.bodyMedium,
+          style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                fontWeight: message != null && message!.read.isEmpty
+                    ? FontWeight.bold
+                    : FontWeight.normal,
+              ),
         );
     }
   }

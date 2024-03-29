@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:instaclone/models/reel_modal.dart';
 
 import '../../../../models/user_post.dart';
 
@@ -25,6 +26,38 @@ class AnimatedFavoriteWidget extends StatelessWidget {
             scale: _animation1.value,
             child: Icon(
               post.isLiked ? Icons.favorite : Icons.favorite_border,
+              color: Colors.white,
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
+class AnimatedFavoriteWidgetForReel extends StatelessWidget {
+  const AnimatedFavoriteWidgetForReel({
+    super.key,
+    required AnimationController animationController1,
+    required Animation<double> animation1,
+    required this.reel,
+  })  : _animationController1 = animationController1,
+        _animation1 = animation1;
+
+  final AnimationController _animationController1;
+  final Animation<double> _animation1;
+  final ReelModel reel;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: AnimatedBuilder(
+        animation: _animationController1,
+        builder: (context, child) {
+          return Transform.scale(
+            scale: _animation1.value,
+            child: Icon(
+              reel.isLiked ? Icons.favorite : Icons.favorite_border,
               color: Colors.white,
             ),
           );
