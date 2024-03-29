@@ -89,7 +89,7 @@ class UserPostsProvider with ChangeNotifier {
     }
   }
 
-  Future<void> fetchLatestPosts() async {
+  Future<void> fetchLatestPosts(int limit) async {
     final userId = FirebaseAuth.instance.currentUser!.uid;
     try {
       List<UserPostModel> listOfPosts = [];
@@ -106,6 +106,7 @@ class UserPostsProvider with ChangeNotifier {
             .collection('posts')
             .where('userId', whereIn: followingsIds)
             .orderBy('id', descending: true)
+            .limit(limit)
             .get()
             .then((data) {
           for (var i in data.docs) {
