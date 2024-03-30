@@ -8,7 +8,10 @@ class ChatUser {
     required this.pushToken,
     required this.userId,
     required this.email,
+    required this.bio,
+    required this.gender, // New field
   });
+
   late final String createdAt;
   late final String lastActive;
   late final bool isOnline;
@@ -17,6 +20,8 @@ class ChatUser {
   late final String pushToken;
   late final String userId;
   late final String email;
+  late final String bio;
+  late final String gender; // New field
 
   ChatUser.fromJson(Map<String, dynamic> json) {
     createdAt = json['createdAt'] ?? '';
@@ -27,6 +32,8 @@ class ChatUser {
     pushToken = json['pushToken'] ?? '';
     userId = json['userId'] ?? '';
     email = json['email'] ?? '';
+    bio = json['bio'] ?? '';
+    gender = json['gender'] ?? ''; // Initialize the new field
   }
 
   Map<String, dynamic> toJson() {
@@ -39,6 +46,8 @@ class ChatUser {
     data['pushToken'] = pushToken;
     data['userId'] = userId;
     data['email'] = email;
+    data['bio'] = bio;
+    data['gender'] = gender; // Include the new field in serialization
     return data;
   }
 }

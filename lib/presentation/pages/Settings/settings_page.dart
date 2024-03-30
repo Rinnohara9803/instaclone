@@ -1,4 +1,5 @@
 import 'package:firebase_core/firebase_core.dart';
+import 'package:instaclone/apis/chat_apis.dart';
 import 'package:instaclone/presentation/pages/Login/login_page.dart';
 import 'package:instaclone/presentation/pages/Register/register_with_email_page.dart';
 import 'package:instaclone/presentation/pages/Settings/dark_mode_page.dart';
@@ -54,6 +55,7 @@ class _SettingsPageState extends State<SettingsPage> {
         iconData: Icons.logout,
         onTap: () async {
           await AuthService.logOut().then((value) {
+            ChatApis.updateActiveStatus(false);
             Navigator.of(context)
                 .pushNamedAndRemoveUntil(LoginPage.routename, (route) => false);
           });

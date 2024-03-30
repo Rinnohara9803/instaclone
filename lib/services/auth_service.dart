@@ -29,6 +29,8 @@ class AuthService {
         'lastActive': null,
         'pushToken': null,
         'userName': null,
+        'gender': null,
+        'bio': null,
       });
     } on FirebaseException catch (e) {
       return Future.error(e.toString());

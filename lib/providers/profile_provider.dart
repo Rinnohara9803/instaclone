@@ -35,14 +35,17 @@ class ProfileProvider with ChangeNotifier {
 
   Future<void> fetchUserProfile(String userId) async {
     _theUser = ChatUser(
-        createdAt: 'createdAt',
-        lastActive: 'lastActive',
-        isOnline: false,
-        profileImage: 'profileImage',
-        userName: 'User',
-        pushToken: 'pushToken',
-        userId: userId,
-        email: '');
+      createdAt: 'createdAt',
+      lastActive: 'lastActive',
+      isOnline: false,
+      profileImage: 'profileImage',
+      userName: 'User',
+      pushToken: 'pushToken',
+      userId: userId,
+      email: '',
+      bio: '',
+      gender: '',
+    );
     notifyListeners();
     try {
       await FirebaseFirestore.instance
@@ -59,6 +62,12 @@ class ProfileProvider with ChangeNotifier {
       return Future.error(
         e.toString(),
       );
+    }
+  }
+
+  Future<void> editProfileImage(String imagePath) async {
+    try {} catch (e) {
+      return Future.error(e.toString());
     }
   }
 }

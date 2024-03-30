@@ -21,6 +21,9 @@ class _ImageShowWidgetState extends State<ImageShowWidget> {
     return GestureDetector(
       child: Stack(
         children: [
+          Container(
+            color: Colors.grey,
+          ),
           SizedBox(
             width: double.infinity,
             child: Image.file(
@@ -39,7 +42,7 @@ class _ImageShowWidgetState extends State<ImageShowWidget> {
         ],
       ),
       onTap: () {
-        widget.onTap();
+        widget.onTap(widget.file);
       },
     );
   }

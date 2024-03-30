@@ -1,5 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:instaclone/presentation/pages/Profile/edit_profile_page.dart';
+import 'package:instaclone/presentation/pages/EditProfile/edit_profile_page.dart';
 import 'package:instaclone/presentation/pages/Profile/widgets/open_settings_widget.dart';
 import 'package:instaclone/presentation/pages/Profile/widgets/profile_data_widget.dart';
 import 'package:instaclone/presentation/pages/Profile/widgets/user_posts_grid_view.dart';
