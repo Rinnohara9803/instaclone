@@ -276,6 +276,9 @@ class _ProfilePageState extends State<ProfilePage>
                                         onTap: () {
                                           Navigator.of(context).push(
                                             MaterialPageRoute(
+                                              settings: const RouteSettings(
+                                                  name: EditProfilePage
+                                                      .routename),
                                               builder: (context) =>
                                                   const EditProfilePage(),
                                             ),

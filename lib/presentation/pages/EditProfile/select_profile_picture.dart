@@ -101,7 +101,7 @@ class _SelectProfilePictureState extends State<SelectProfilePicture>
                 var file = widget.selectedModel.files[i];
                 bool isSelected = file == widget.selectedImage;
 
-                return ImageShowWidget(
+                return ImageWidget(
                   file: file,
                   isSelected: isSelected,
                   onTap: widget.setImage,
@@ -121,5 +121,49 @@ class _SelectProfilePictureState extends State<SelectProfilePicture>
     } else {
       _transformationController.value = Matrix4.identity();
     }
+  }
+}
+
+class ImageWidget extends StatefulWidget {
+  final String file;
+  final bool isSelected;
+  final Function onTap;
+  const ImageWidget(
+      {super.key,
+      required this.file,
+      required this.isSelected,
+      required this.onTap});
+
+  @override
+  State<ImageWidget> createState() => _ImageWidgetState();
+}
+
+class _ImageWidgetState extends State<ImageWidget> {
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      child: Stack(
+        children: [
+          SizedBox(
+            width: double.infinity,
+            child: Image.file(
+              File(widget.file),
+              fit: BoxFit.cover,
+            ),
+          ),
+          // if (widget.isSelected)
+          Center(
+            child: Container(
+              color: widget.isSelected
+                  ? Colors.black.withOpacity(0.6)
+                  : Colors.transparent,
+            ),
+          ),
+        ],
+      ),
+      onTap: () {
+        widget.onTap(widget.file);
+      },
+    );
   }
 }

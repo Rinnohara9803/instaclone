@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:flutter/widgets.dart';
 import 'package:instaclone/presentation/pages/UploadPost/add_post_details_page.dart';
 import 'package:instaclone/presentation/pages/UploadPost/single_image_filter_page.dart';
 import 'package:instaclone/presentation/pages/UploadPost/widgets/color_filtered_widget.dart';

@@ -1,21 +1,16 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
-import 'package:instaclone/presentation/pages/Chat/chats_page.dart';
 import 'package:instaclone/presentation/pages/Profile/profile_page.dart';
-import 'package:instaclone/presentation/pages/UploadPost/select_video_page.dart';
 import 'package:instaclone/presentation/pages/UserReels/latest_reels_page.dart';
 import 'package:instaclone/presentation/resources/themes_manager.dart';
 import 'package:instaclone/providers/profile_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import '../../../apis/chat_apis.dart';
 import '../Home/home_page.dart';
 import '../Search/search_page.dart';
-import '../UploadPost/select_image_page.dart';
-import 'widgets/custom_popup_menubutton.dart';
 
 class DashboardPage extends StatefulWidget {
   final Function navigateToChatsPage;
@@ -164,25 +159,46 @@ class _DashboardPageState extends State<DashboardPage>
                 label: '',
               ),
               BottomNavigationBarItem(
-                icon: CircleAvatar(
-                  backgroundColor:
-                      Provider.of<ThemeProvider>(context).isLightTheme
-                          ? Colors.black
-                          : Colors.white,
-                  radius: _selectedIndex == 4 ? 14 : 12,
-                  child: CircleAvatar(
-                    radius: 12,
-                    backgroundColor: Theme.of(context).primaryColor,
-                    backgroundImage: NetworkImage(
-                      Provider.of<ProfileProvider>(context)
-                          .chatUser
-                          .profileImage,
-                    ),
-                    child: const Icon(
-                      Icons.person,
-                      color: Colors.grey,
-                    ),
+                icon: Container(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(width: _selectedIndex == 4 ? 2 : 1),
+                    color: Provider.of<ThemeProvider>(context).isLightTheme
+                        ? Colors.black
+                        : Colors.white,
                   ),
+                  child: Consumer<ProfileProvider>(
+                      builder: (context, profileData, child) {
+                    return ClipRRect(
+                      borderRadius: BorderRadius.circular(
+                          MediaQuery.of(context).size.height * .2),
+                      child: CachedNetworkImage(
+                        height: MediaQuery.of(context).size.height * 0.025,
+                        width: MediaQuery.of(context).size.height * 0.025,
+                        fit: BoxFit.cover,
+                        imageUrl: profileData.chatUser.profileImage.isEmpty
+                            ? 'no image'
+                            : profileData.chatUser.profileImage,
+                        progressIndicatorBuilder:
+                            (context, url, downloadProgress) =>
+                                const CircleAvatar(
+                          backgroundColor: Colors.black54,
+                          child: Icon(
+                            Icons.person,
+                            color: Colors.grey,
+                          ),
+                        ),
+                        errorWidget: (context, url, error) =>
+                            const CircleAvatar(
+                          backgroundColor: Colors.black54,
+                          child: Icon(
+                            Icons.person,
+                            color: Colors.grey,
+                          ),
+                        ),
+                      ),
+                    );
+                  }),
                 ),
                 label: '',
               ),

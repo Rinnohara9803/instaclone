@@ -1,10 +1,11 @@
 import 'dart:convert';
 
 import 'package:camera/camera.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_storage_path/flutter_storage_path.dart';
 import 'package:instaclone/models/image_file_model.dart';
+import 'package:instaclone/presentation/pages/EditProfile/edit_selected_picture_page.dart';
 import 'package:instaclone/presentation/pages/EditProfile/select_profile_picture.dart';
 import 'package:instaclone/presentation/pages/EditProfile/widgets/click_profile_picture.dart';
 import 'package:instaclone/presentation/resources/themes_manager.dart';
@@ -20,8 +21,8 @@ class SelectProfilePicturePage extends StatefulWidget {
 }
 
 class _SelectProfilePicturePageState extends State<SelectProfilePicturePage> {
-  int currentIndex = 0;
-  ValueNotifier _pageIndexNotifier = ValueNotifier<double>(0);
+  final ValueNotifier _currentIndexNotifier = ValueNotifier(0);
+  final ValueNotifier _pageNotifier = ValueNotifier<double>(0);
   final pageController = PageController(initialPage: 0);
 
   List<ImageFileModel>? files;
@@ -74,7 +75,7 @@ class _SelectProfilePicturePageState extends State<SelectProfilePicturePage> {
   @override
   void initState() {
     pageController.addListener(() {
-      _pageIndexNotifier.value = pageController.page;
+      _pageNotifier.value = pageController.page;
     });
     getImagesPath();
     super.initState();
@@ -83,24 +84,28 @@ class _SelectProfilePicturePageState extends State<SelectProfilePicturePage> {
   @override
   void dispose() {
     pageController.dispose();
+    _currentIndexNotifier.dispose();
+    _pageNotifier.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    print('page view is running');
     return SafeArea(
       child: Scaffold(
         body: Column(
           children: [
             ValueListenableBuilder(
-                valueListenable: _pageIndexNotifier,
+                valueListenable: _pageNotifier,
                 builder: (context, value, child) {
                   return Stack(
                     children: [
                       AnimatedOpacity(
                         opacity: 1.0 - value,
                         duration: const Duration(milliseconds: 100),
-                        child: selectProfilePicHeader(context),
+                        child: selectProfilePicHeader(
+                            context, image == null ? '' : image!),
                       ),
                       AnimatedOpacity(
                         opacity: value,
@@ -113,9 +118,7 @@ class _SelectProfilePicturePageState extends State<SelectProfilePicturePage> {
             Expanded(
               child: PageView(
                 onPageChanged: (index) {
-                  setState(() {
-                    currentIndex = index;
-                  });
+                  _currentIndexNotifier.value = index;
                 },
                 controller: pageController,
                 children: [
@@ -135,60 +138,64 @@ class _SelectProfilePicturePageState extends State<SelectProfilePicturePage> {
             SizedBox(
               height: MediaQuery.of(context).size.height * 0.07,
               width: double.infinity,
-              child: Row(
-                children: [
-                  Expanded(
-                    child: GestureDetector(
-                      onTap: () {
-                        pageController.animateToPage(
-                          0,
-                          duration: const Duration(milliseconds: 400),
-                          curve: Curves.ease,
-                        );
-                      },
-                      child: SizedBox(
-                        child: Center(
-                          child: Text(
-                            'Gallery',
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyMedium!
-                                .copyWith(
-                                    fontWeight: currentIndex == 0
-                                        ? FontWeight.bold
-                                        : FontWeight.normal),
+              child: ValueListenableBuilder(
+                  valueListenable: _currentIndexNotifier,
+                  builder: (context, value, child) {
+                    return Row(
+                      children: [
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () {
+                              pageController.animateToPage(
+                                0,
+                                duration: const Duration(milliseconds: 400),
+                                curve: Curves.ease,
+                              );
+                            },
+                            child: SizedBox(
+                              child: Center(
+                                child: Text(
+                                  'Gallery',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyMedium!
+                                      .copyWith(
+                                          fontWeight: value == 0
+                                              ? FontWeight.bold
+                                              : FontWeight.normal),
+                                ),
+                              ),
+                            ),
                           ),
                         ),
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    child: GestureDetector(
-                      onTap: () {
-                        pageController.animateToPage(
-                          1,
-                          duration: const Duration(milliseconds: 400),
-                          curve: Curves.ease,
-                        );
-                      },
-                      child: SizedBox(
-                        child: Center(
-                          child: Text(
-                            'Photo',
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyMedium!
-                                .copyWith(
-                                    fontWeight: currentIndex == 1
-                                        ? FontWeight.bold
-                                        : FontWeight.normal),
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () {
+                              pageController.animateToPage(
+                                1,
+                                duration: const Duration(milliseconds: 400),
+                                curve: Curves.ease,
+                              );
+                            },
+                            child: SizedBox(
+                              child: Center(
+                                child: Text(
+                                  'Photo',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyMedium!
+                                      .copyWith(
+                                          fontWeight: value == 1
+                                              ? FontWeight.bold
+                                              : FontWeight.normal),
+                                ),
+                              ),
+                            ),
                           ),
                         ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+                      ],
+                    );
+                  }),
             ),
           ],
         ),
@@ -215,7 +222,7 @@ class _SelectProfilePicturePageState extends State<SelectProfilePicturePage> {
     );
   }
 
-  Row selectProfilePicHeader(BuildContext context) {
+  Row selectProfilePicHeader(BuildContext context, String imagePath) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -261,7 +268,13 @@ class _SelectProfilePicturePageState extends State<SelectProfilePicturePage> {
           ],
         ),
         TextButton(
-          onPressed: () {},
+          onPressed: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (ctx) => EditSelectedPicturePage(path: imagePath),
+              ),
+            );
+          },
           child: const Text(
             'Next',
             style: TextStyle(color: Colors.blueAccent),

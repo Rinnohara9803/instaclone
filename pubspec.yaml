@@ -32,6 +32,7 @@ dependencies:
   cached_network_image: ^3.3.1
   camera: ^0.10.5+9
   cloud_firestore: ^4.15.9
+  colorfilter_generator: ^0.0.8
   cupertino_icons: ^1.0.6
   dio: ^5.4.1
   email_validator: ^2.1.17
@@ -51,6 +52,7 @@ dependencies:
   geolocator: ^11.0.0
   google_maps_flutter: ^2.6.0
   http: ^1.2.1
+  image_cropper: ^5.0.1
   image_picker: ^1.0.7
   intl: ^0.19.0
   matrix_gesture_detector_pro:

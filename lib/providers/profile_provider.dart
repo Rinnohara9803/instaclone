@@ -1,16 +1,26 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:instaclone/models/chat_user.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class ProfileProvider with ChangeNotifier {
+  final firestore = FirebaseFirestore.instance;
   late ChatUser _chatUser;
 
   ChatUser get chatUser => _chatUser;
 
-  late ChatUser _theUser;
+  bool _loadingState = false;
 
-  ChatUser get theUser => _theUser;
+  bool get loadingState {
+    return _loadingState;
+  }
+
+  // late ChatUser _theUser;
+
+  // ChatUser get theUser => _theUser;
 
   Future<void> fetchProfile() async {
     final user = FirebaseAuth.instance.currentUser;
@@ -33,41 +43,65 @@ class ProfileProvider with ChangeNotifier {
     }
   }
 
-  Future<void> fetchUserProfile(String userId) async {
-    _theUser = ChatUser(
-      createdAt: 'createdAt',
-      lastActive: 'lastActive',
-      isOnline: false,
-      profileImage: 'profileImage',
-      userName: 'User',
-      pushToken: 'pushToken',
-      userId: userId,
-      email: '',
-      bio: '',
-      gender: '',
-    );
-    notifyListeners();
-    try {
-      await FirebaseFirestore.instance
-          .collection('users')
-          .doc(userId)
-          .get()
-          .then(
-        (data) {
-          _theUser = ChatUser.fromJson(data.data() as Map<String, dynamic>);
-          notifyListeners();
-        },
-      );
-    } catch (e) {
-      return Future.error(
-        e.toString(),
-      );
-    }
-  }
+  // Future<void> fetchUserProfile(String userId) async {
+  //   _theUser = ChatUser(
+  //     createdAt: 'createdAt',
+  //     lastActive: 'lastActive',
+  //     isOnline: false,
+  //     profileImage: 'profileImage',
+  //     userName: 'User',
+  //     pushToken: 'pushToken',
+  //     userId: userId,
+  //     email: '',
+  //     bio: '',
+  //     gender: '',
+  //   );
+  //   notifyListeners();
+  //   try {
+  //     await FirebaseFirestore.instance
+  //         .collection('users')
+  //         .doc(userId)
+  //         .get()
+  //         .then(
+  //       (data) {
+  //         _theUser = ChatUser.fromJson(data.data() as Map<String, dynamic>);
+  //         notifyListeners();
+  //       },
+  //     );
+  //   } catch (e) {
+  //     return Future.error(
+  //       e.toString(),
+  //     );
+  //   }
+  // }
 
   Future<void> editProfileImage(String imagePath) async {
-    try {} catch (e) {
+    _loadingState = true;
+    notifyListeners();
+    try {
+      await FirebaseStorage.instance
+          .ref(
+            'profileImages/${chatUser.userId}/$imagePath',
+          )
+          .putFile(File(imagePath))
+          .then((p0) {});
+
+      String imageUrl = await FirebaseStorage.instance
+          .ref('profileImages/${chatUser.userId}/$imagePath')
+          .getDownloadURL();
+      await firestore.collection('users').doc(chatUser.userId).update({
+        'profileImage': imageUrl,
+      }).then((value) {
+        _chatUser = ChatUser.fromJson({
+          ..._chatUser.toJson(),
+          'profileImage': imageUrl,
+        });
+        notifyListeners();
+      });
+    } catch (e) {
       return Future.error(e.toString());
     }
+    _loadingState = false;
+    notifyListeners();
   }
 }

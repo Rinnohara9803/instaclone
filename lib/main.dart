@@ -3,10 +3,10 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:instaclone/presentation/pages/ChatDetails/chat_details.dart';
 import 'package:instaclone/presentation/pages/Dashboard/initial_page.dart';
+import 'package:instaclone/presentation/pages/EditProfile/edit_profile_page.dart';
 import 'package:instaclone/presentation/pages/Register/register_with_email_page.dart';
 import 'package:instaclone/presentation/pages/Register/register_with_phone_page_one.dart';
 import 'package:instaclone/presentation/pages/Splash/splash_page.dart';
-import 'package:instaclone/presentation/pages/Verify-Email/verify_email_page.dart';
 import 'package:instaclone/providers/chat_details_provider.dart';
 import 'package:instaclone/providers/profile_data_provider.dart';
 import 'package:instaclone/providers/profile_provider.dart';
@@ -15,8 +15,6 @@ import 'package:instaclone/providers/user_reels_provider.dart';
 import 'package:instaclone/providers/user_stories_provider.dart';
 import 'package:instaclone/providers/video_provider.dart';
 import 'package:provider/provider.dart';
-// import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
-// import 'package:zego_uikit_signaling_plugin/zego_uikit_signaling_plugin.dart';
 import 'firebase_options.dart';
 import 'presentation/pages/Login/login_page.dart';
 import 'presentation/resources/themes_manager.dart';
@@ -30,41 +28,26 @@ Future<void> main() async {
 
   final navigatorKey = GlobalKey<NavigatorState>();
 
-  // ZegoUIKitPrebuiltCallInvitationService().setNavigatorKey(navigatorKey);
-
-  // ZegoUIKit().initLog().then((value) {d
-  //   ///  Call the `useSystemCallingUI` method
-  //   ZegoUIKitPrebuiltCallInvitationService().useSystemCallingUI(
-  //     [ZegoUIKitSignalingPlugin()],
-  //   );
-
   runApp(MyApp(navigatorKey: navigatorKey));
-  // });
 }
 
 class MyApp extends StatelessWidget {
   final GlobalKey<NavigatorState> navigatorKey;
-  const MyApp({super.key, required this.navigatorKey});
+  const MyApp({Key? key, required this.navigatorKey}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        // profile provider
         ChangeNotifierProvider<ProfileProvider>(
           create: (context) => ProfileProvider(),
         ),
-
-        // followings-followers provider
         ChangeNotifierProvider<ProfileDataProvider>(
           create: (context) => ProfileDataProvider(),
         ),
-
-        // user posts provider
         ChangeNotifierProvider<UserPostsProvider>(
           create: (context) => UserPostsProvider(),
         ),
-
         ChangeNotifierProvider<ThemeProvider>(
           create: (context) => ThemeProvider(),
         ),
@@ -86,23 +69,39 @@ class MyApp extends StatelessWidget {
           return MaterialApp(
             navigatorKey: navigatorKey,
             title: 'instaclone',
-
-            // themes manager
             theme: themeData.isLightTheme
                 ? getLightApplicationTheme()
                 : getDarkApplicationTheme(),
             home: const SplashPage(),
-
-            // named page-routes
-            routes: {
-              LoginPage.routename: (context) => const LoginPage(),
-              RegisterWithEmailPageOne.routename: (context) =>
-                  const RegisterWithEmailPageOne(),
-              RegisterWithPhonePageOne.routename: (context) =>
-                  const RegisterWithPhonePageOne(),
-              VerifyEmailPage.routename: (context) => const VerifyEmailPage(),
-              InitialPage.routename: (context) => const InitialPage(),
-              ChatDetails.routename: (context) => const ChatDetails(),
+            onGenerateRoute: (settings) {
+              switch (settings.name) {
+                case LoginPage.routename:
+                  return MaterialPageRoute(
+                    builder: (context) => const LoginPage(),
+                  );
+                case RegisterWithEmailPageOne.routename:
+                  return MaterialPageRoute(
+                    builder: (context) => const RegisterWithEmailPageOne(),
+                  );
+                case RegisterWithPhonePageOne.routename:
+                  return MaterialPageRoute(
+                    builder: (context) => const RegisterWithPhonePageOne(),
+                  );
+                case ChatDetails.routename:
+                  return MaterialPageRoute(
+                    builder: (context) => const ChatDetails(),
+                  );
+                case InitialPage.routename:
+                  return MaterialPageRoute(
+                    builder: (context) => const InitialPage(),
+                  );
+                case EditProfilePage.routename:
+                  return MaterialPageRoute(
+                    builder: (context) => const EditProfilePage(),
+                  );
+                default:
+                  throw Exception('Invalid route: ${settings.name}');
+              }
             },
           );
         },

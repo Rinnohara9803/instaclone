@@ -1,6 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:camera/camera.dart';
-import 'package:flutter/widgets.dart';
 import 'package:instaclone/presentation/pages/EditProfile/select_profile_picture_page.dart';
 import 'package:instaclone/presentation/resources/themes_manager.dart';
 import 'package:instaclone/providers/profile_provider.dart';
@@ -8,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class EditProfilePage extends StatefulWidget {
+  static const String routename = '/edit-profile-page';
   const EditProfilePage({super.key});
 
   @override
@@ -20,12 +20,13 @@ class _EditProfilePageState extends State<EditProfilePage> {
       context: context,
       builder: (BuildContext context) {
         return Container(
-          height: MediaQuery.of(context).size.height * 0.17,
+          height: MediaQuery.of(context).size.height * 0.23,
           padding: const EdgeInsets.symmetric(
             vertical: 10,
             horizontal: 20,
           ),
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -71,6 +72,39 @@ class _EditProfilePageState extends State<EditProfilePage> {
                       ),
                       Text(
                         'New profile picture',
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              InkWell(
+                onTap: () {
+                  Navigator.pop(context);
+
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => SelectProfilePicturePage(
+                        cameras: cameras,
+                      ),
+                    ),
+                  );
+                },
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 10,
+                    horizontal: 10,
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(
+                        Icons.mail,
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Text(
+                        'Import from google',
                         style: Theme.of(context).textTheme.bodyMedium,
                       ),
                     ],
@@ -127,113 +161,144 @@ class _EditProfilePageState extends State<EditProfilePage> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(
-          leading: IconButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            icon: Icon(
-              Icons.arrow_back,
-              color: Theme.of(context).iconTheme.color,
-            ),
-          ),
-          title: Text(
-            'Edit Profile',
-            style: Theme.of(context).textTheme.titleSmall,
-          ),
-        ),
-        body: Consumer<ProfileProvider>(builder: (context, profileData, _) {
-          return Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 20,
-              vertical: 10,
-            ),
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(
-                        MediaQuery.of(context).size.height * .2),
-                    child: CachedNetworkImage(
-                      height: MediaQuery.of(context).size.height * 0.085,
-                      width: MediaQuery.of(context).size.height * 0.085,
-                      fit: BoxFit.cover,
-                      imageUrl: profileData.chatUser.profileImage.isEmpty
-                          ? 'no image'
-                          : profileData.chatUser.profileImage,
-                      progressIndicatorBuilder:
-                          (context, url, downloadProgress) =>
-                              const CircleAvatar(
-                        backgroundColor: Colors.black54,
-                        child: Icon(
-                          Icons.person,
-                          color: Colors.grey,
-                        ),
-                      ),
-                      errorWidget: (context, url, error) => CircleAvatar(
-                        backgroundColor: Colors.black54,
-                        child: Icon(
-                          Icons.person,
-                          size: MediaQuery.of(context).size.height * 0.055,
-                          color: Colors.grey,
-                        ),
-                      ),
-                    ),
+      child: Consumer<ProfileProvider>(builder: (context, profileData, child) {
+        return Stack(
+          children: [
+            Scaffold(
+              appBar: AppBar(
+                leading: IconButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  icon: Icon(
+                    Icons.arrow_back,
+                    color: Theme.of(context).iconTheme.color,
                   ),
-                  TextButton(
-                    onPressed: () {
-                      showBottomSheet(context, cameras);
-                    },
-                    child: Text(
-                      'Edit picture',
-                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                            color: Colors.blueAccent,
-                          ),
-                    ),
+                ),
+                title: Text(
+                  'Edit Profile',
+                  style: Theme.of(context).textTheme.titleSmall,
+                ),
+              ),
+              body:
+                  Consumer<ProfileProvider>(builder: (context, profileData, _) {
+                return Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 10,
                   ),
-                  EditProfileItem(
-                    title: 'Name',
-                    value: profileData.chatUser.userName,
-                    onTap: () {},
-                  ),
-                  EditProfileItem(
-                    title: 'Bio',
-                    value: profileData.chatUser.bio,
-                    onTap: () {},
-                  ),
-                  GestureDetector(
-                    onTap: () {},
+                  child: SingleChildScrollView(
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        const Text(
-                          'Gender',
-                          style: TextStyle(
-                            color: Colors.grey,
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(
+                              MediaQuery.of(context).size.height * .2),
+                          child: CachedNetworkImage(
+                            height: MediaQuery.of(context).size.height * 0.085,
+                            width: MediaQuery.of(context).size.height * 0.085,
+                            fit: BoxFit.cover,
+                            imageUrl: profileData.chatUser.profileImage.isEmpty
+                                ? 'no image'
+                                : profileData.chatUser.profileImage,
+                            progressIndicatorBuilder:
+                                (context, url, downloadProgress) =>
+                                    const CircleAvatar(
+                              backgroundColor: Colors.black54,
+                              child: Icon(
+                                Icons.person,
+                                color: Colors.grey,
+                              ),
+                            ),
+                            errorWidget: (context, url, error) => CircleAvatar(
+                              backgroundColor: Colors.black54,
+                              child: Icon(
+                                Icons.person,
+                                size:
+                                    MediaQuery.of(context).size.height * 0.055,
+                                color: Colors.grey,
+                              ),
+                            ),
                           ),
                         ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(profileData.chatUser.gender),
-                            const Icon(
-                              Icons.arrow_circle_right,
-                              color: Colors.grey,
-                            ),
-                          ],
+                        TextButton(
+                          onPressed: () {
+                            showBottomSheet(context, cameras);
+                          },
+                          child: Text(
+                            'Edit picture',
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyMedium!
+                                .copyWith(
+                                  color: Colors.blueAccent,
+                                ),
+                          ),
                         ),
-                        const Divider(),
+                        EditProfileItem(
+                          title: 'Name',
+                          value: profileData.chatUser.userName,
+                          onTap: () {},
+                        ),
+                        EditProfileItem(
+                          title: 'Bio',
+                          value: profileData.chatUser.bio,
+                          onTap: () {},
+                        ),
+                        GestureDetector(
+                          onTap: () {},
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                'Gender',
+                                style: TextStyle(
+                                  color: Colors.grey,
+                                ),
+                              ),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(profileData.chatUser.gender),
+                                  const Icon(
+                                    Icons.arrow_circle_right,
+                                    color: Colors.grey,
+                                  ),
+                                ],
+                              ),
+                              const Divider(),
+                            ],
+                          ),
+                        ),
                       ],
                     ),
                   ),
-                ],
-              ),
+                );
+              }),
             ),
-          );
-        }),
-      ),
+            if (profileData.loadingState)
+              Container(
+                height: MediaQuery.of(context).size.height,
+                width: MediaQuery.of(context).size.width,
+                color: Colors.black45,
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      LinearProgressIndicator(
+                        backgroundColor: Colors.grey,
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          Colors.blue.withOpacity(0.5),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+          ],
+        );
+      }),
     );
   }
 }

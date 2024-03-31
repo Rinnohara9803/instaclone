@@ -20,7 +20,7 @@ ThemeData getDarkApplicationTheme() {
     // primary color
     primaryColor: Colors.black,
     errorColor: Colors.white,
-    colorScheme: const ColorScheme.dark(),
+    colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueAccent),
 
     // icon buttom theme
     iconButtonTheme: IconButtonThemeData(
@@ -191,7 +191,7 @@ ThemeData getLightApplicationTheme() {
     // primary color
     primaryColor: Colors.white,
     errorColor: Colors.black,
-    colorScheme: const ColorScheme.light(),
+    colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueAccent),
 
     // icon buttom theme
     iconButtonTheme: const IconButtonThemeData(

@@ -29,9 +29,7 @@ class _LatestReelsDetailsState extends State<LatestReelsDetails> {
       controller: _pageController,
       children: [
         VideoDetails(widget.reel, widget.reel.video),
-        UserDetails(
-          userId: widget.reel.userId,
-        ),
+        const SizedBox(),
       ],
     );
   }
