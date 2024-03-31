@@ -28,10 +28,7 @@ class DashboardPage extends StatefulWidget {
   State<DashboardPage> createState() => _DashboardPageState();
 }
 
-class _DashboardPageState extends State<DashboardPage>
-    with AutomaticKeepAliveClientMixin<DashboardPage> {
-  @override
-  bool get wantKeepAlive => true;
+class _DashboardPageState extends State<DashboardPage> {
   final _pageController = PageController(
     initialPage: 0,
   );
@@ -86,7 +83,6 @@ class _DashboardPageState extends State<DashboardPage>
 
   @override
   Widget build(BuildContext context) {
-    super.build(context);
     return SafeArea(
       child: Scaffold(
         body: Column(

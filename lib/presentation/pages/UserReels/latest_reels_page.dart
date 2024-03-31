@@ -12,7 +12,10 @@ class LatestReelsPage extends StatefulWidget {
   State<LatestReelsPage> createState() => _LatestReelsPageState();
 }
 
-class _LatestReelsPageState extends State<LatestReelsPage> {
+class _LatestReelsPageState extends State<LatestReelsPage>
+    with AutomaticKeepAliveClientMixin<LatestReelsPage> {
+  @override
+  bool get wantKeepAlive => true;
   late PageController _pageController;
 
   @override
@@ -29,6 +32,7 @@ class _LatestReelsPageState extends State<LatestReelsPage> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return FutureBuilder(
         future: Provider.of<ReelsProvider>(context, listen: false)
             .fetchLatestReels(),

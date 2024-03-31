@@ -17,6 +17,7 @@ import '../../resources/constants/sizedbox_constants.dart';
 import '../Chat/chat_page.dart';
 import '../Dashboard/widgets/custom_popup_menubutton.dart';
 import '../UserPosts/user_posts_page.dart';
+import 'package:flutter/widgets.dart';
 
 class ProfilePage extends StatefulWidget {
   final ChatUser chatUser;
@@ -50,8 +51,9 @@ class _ProfilePageState extends State<ProfilePage>
 
   @override
   Widget build(BuildContext context) {
-    final user = FirebaseAuth.instance.currentUser;
     super.build(context);
+    final user = FirebaseAuth.instance.currentUser;
+
     return SafeArea(
       child: DefaultTabController(
         initialIndex: 0,
