@@ -158,10 +158,10 @@ class _DashboardPageState extends State<DashboardPage> {
                 icon: Container(
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    border: Border.all(width: _selectedIndex == 4 ? 2 : 1),
-                    color: Provider.of<ThemeProvider>(context).isLightTheme
-                        ? Colors.black
-                        : Colors.white,
+                    border: Border.all(
+                        width: _selectedIndex == 4 ? 2 : 1,
+                        color: Theme.of(context).errorColor),
+                    color: Theme.of(context).primaryColor,
                   ),
                   child: Consumer<ProfileProvider>(
                       builder: (context, profileData, child) {
@@ -176,21 +176,15 @@ class _DashboardPageState extends State<DashboardPage> {
                             ? 'no image'
                             : profileData.chatUser.profileImage,
                         progressIndicatorBuilder:
-                            (context, url, downloadProgress) =>
-                                const CircleAvatar(
-                          backgroundColor: Colors.black54,
-                          child: Icon(
-                            Icons.person,
-                            color: Colors.grey,
-                          ),
+                            (context, url, downloadProgress) => Icon(
+                          Icons.person,
+                          size: MediaQuery.of(context).size.height * 0.020,
+                          color: Colors.grey,
                         ),
-                        errorWidget: (context, url, error) =>
-                            const CircleAvatar(
-                          backgroundColor: Colors.black54,
-                          child: Icon(
-                            Icons.person,
-                            color: Colors.grey,
-                          ),
+                        errorWidget: (context, url, error) => Icon(
+                          Icons.person,
+                          size: MediaQuery.of(context).size.height * 0.020,
+                          color: Colors.grey,
                         ),
                       ),
                     );

@@ -1,9 +1,13 @@
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:instaclone/presentation/pages/ChatDetails/chat_details.dart';
 import 'package:instaclone/presentation/pages/Dashboard/initial_page.dart';
+import 'package:instaclone/presentation/pages/EditProfile/edit_bio_page.dart';
+import 'package:instaclone/presentation/pages/EditProfile/edit_gender_page.dart';
 import 'package:instaclone/presentation/pages/EditProfile/edit_profile_page.dart';
+import 'package:instaclone/presentation/pages/EditProfile/edit_username_page.dart';
 import 'package:instaclone/presentation/pages/Register/register_with_email_page.dart';
 import 'package:instaclone/presentation/pages/Register/register_with_phone_page_one.dart';
 import 'package:instaclone/presentation/pages/Splash/splash_page.dart';
@@ -25,6 +29,10 @@ Future<void> main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   await FirebaseAppCheck.instance.activate();
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
 
   final navigatorKey = GlobalKey<NavigatorState>();
 
@@ -98,6 +106,18 @@ class MyApp extends StatelessWidget {
                 case EditProfilePage.routename:
                   return MaterialPageRoute(
                     builder: (context) => const EditProfilePage(),
+                  );
+                case EditUsernamePage.routeName:
+                  return MaterialPageRoute(
+                    builder: (context) => const EditUsernamePage(),
+                  );
+                case EditBioPage.routeName:
+                  return MaterialPageRoute(
+                    builder: (context) => const EditBioPage(),
+                  );
+                case EditGenderPage.routeName:
+                  return MaterialPageRoute(
+                    builder: (ctx) => const EditGenderPage(),
                   );
                 default:
                   throw Exception('Invalid route: ${settings.name}');

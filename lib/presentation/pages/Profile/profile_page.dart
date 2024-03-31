@@ -263,9 +263,9 @@ class _ProfilePageState extends State<ProfilePage>
                               const SizedBox(
                                 height: 10,
                               ),
-                              const Text(
-                                'Oh, well whatever happens happens.',
-                                style: TextStyle(
+                              Text(
+                                users[0].bio,
+                                style: const TextStyle(
                                   fontSize: 12,
                                 ),
                               ),

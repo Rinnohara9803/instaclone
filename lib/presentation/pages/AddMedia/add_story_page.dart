@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'package:instaclone/models/story.dart';
-import 'package:instaclone/presentation/pages/AddMedia/add_reels_page.dart';
 import 'package:instaclone/presentation/pages/AddMedia/edit_story_page.dart';
 import 'package:instaclone/presentation/pages/AddMedia/widgets/circle_progress.dart';
 

@@ -104,4 +104,84 @@ class ProfileProvider with ChangeNotifier {
     _loadingState = false;
     notifyListeners();
   }
+
+  Future<void> editUserName(String userName) async {
+    _loadingState = true;
+    notifyListeners();
+    try {
+      await firestore.collection('users').doc(chatUser.userId).update({
+        'userName': userName,
+      }).then((value) {
+        _chatUser = ChatUser.fromJson({
+          ..._chatUser.toJson(),
+          'userName': userName,
+        });
+        notifyListeners();
+      });
+    } catch (e) {
+      return Future.error(e.toString());
+    }
+    _loadingState = false;
+    notifyListeners();
+  }
+
+  Future<void> editBio(String bio) async {
+    _loadingState = true;
+    notifyListeners();
+    try {
+      await firestore.collection('users').doc(chatUser.userId).update({
+        'bio': bio,
+      }).then((value) {
+        _chatUser = ChatUser.fromJson({
+          ..._chatUser.toJson(),
+          'bio': bio,
+        });
+        notifyListeners();
+      });
+    } catch (e) {
+      return Future.error(e.toString());
+    }
+    _loadingState = false;
+    notifyListeners();
+  }
+
+  Future<void> editGender(String gender) async {
+    _loadingState = true;
+    notifyListeners();
+    try {
+      await firestore.collection('users').doc(chatUser.userId).update({
+        'gender': gender,
+      }).then((value) {
+        _chatUser = ChatUser.fromJson({
+          ..._chatUser.toJson(),
+          'gender': gender,
+        });
+        notifyListeners();
+      });
+    } catch (e) {
+      return Future.error(e.toString());
+    }
+    _loadingState = false;
+    notifyListeners();
+  }
+
+  Future<void> removeProfilePicture() async {
+    _loadingState = true;
+    notifyListeners();
+    try {
+      await firestore.collection('users').doc(chatUser.userId).update({
+        'profileImage': null,
+      }).then((value) {
+        _chatUser = ChatUser.fromJson({
+          ..._chatUser.toJson(),
+          'profileImage': '',
+        });
+        notifyListeners();
+      });
+    } catch (e) {
+      return Future.error(e.toString());
+    }
+    _loadingState = false;
+    notifyListeners();
+  }
 }
