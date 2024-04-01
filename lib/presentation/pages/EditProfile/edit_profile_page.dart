@@ -5,6 +5,7 @@ import 'package:instaclone/presentation/pages/EditProfile/edit_bio_page.dart';
 import 'package:instaclone/presentation/pages/EditProfile/edit_gender_page.dart';
 import 'package:instaclone/presentation/pages/EditProfile/edit_username_page.dart';
 import 'package:instaclone/presentation/pages/EditProfile/select_profile_picture_page.dart';
+import 'package:instaclone/presentation/resources/constants/sizedbox_constants.dart';
 import 'package:instaclone/presentation/resources/themes_manager.dart';
 import 'package:instaclone/providers/profile_provider.dart';
 import 'package:flutter/material.dart';
@@ -178,181 +179,173 @@ class _EditProfilePageState extends State<EditProfilePage> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: Consumer<ProfileProvider>(builder: (context, profileData, child) {
-        return Stack(
-          children: [
-            Scaffold(
-              appBar: AppBar(
-                leading: IconButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  icon: Icon(
-                    Icons.arrow_back,
-                    color: Theme.of(context).iconTheme.color,
-                  ),
+      child: Scaffold(
+        body: Consumer<ProfileProvider>(builder: (context, profileData, _) {
+          return Stack(
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 10,
                 ),
-                title: Text(
-                  'Edit Profile',
-                  style: Theme.of(context).textTheme.titleSmall,
-                ),
-              ),
-              body:
-                  Consumer<ProfileProvider>(builder: (context, profileData, _) {
-                return Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 20,
-                    vertical: 10,
-                  ),
-                  child: SingleChildScrollView(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(
-                              MediaQuery.of(context).size.height * .2),
-                          child: CachedNetworkImage(
-                            height: MediaQuery.of(context).size.height * 0.085,
-                            width: MediaQuery.of(context).size.height * 0.085,
-                            fit: BoxFit.cover,
-                            imageUrl: profileData.chatUser.profileImage.isEmpty
-                                ? 'no image'
-                                : profileData.chatUser.profileImage,
-                            progressIndicatorBuilder:
-                                (context, url, downloadProgress) =>
-                                    CircleAvatar(
-                              backgroundColor: Colors.black54,
-                              child: Icon(
-                                Icons.person,
-                                size:
-                                    MediaQuery.of(context).size.height * 0.055,
-                                color: Colors.grey,
-                              ),
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Row(
+                        children: [
+                          IconButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            icon: Icon(
+                              Icons.arrow_back,
+                              color: Theme.of(context).iconTheme.color,
                             ),
-                            errorWidget: (context, url, error) => CircleAvatar(
-                              backgroundColor: Colors.black54,
-                              child: Icon(
-                                Icons.person,
-                                size:
-                                    MediaQuery.of(context).size.height * 0.055,
-                                color: Colors.grey,
-                              ),
+                          ),
+                          Text(
+                            'Edit Profile',
+                            style: Theme.of(context).textTheme.titleSmall,
+                          ),
+                        ],
+                      ),
+                      SizedBoxConstants.sizedboxh10,
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(
+                            MediaQuery.of(context).size.height * .2),
+                        child: CachedNetworkImage(
+                          height: MediaQuery.of(context).size.height * 0.085,
+                          width: MediaQuery.of(context).size.height * 0.085,
+                          fit: BoxFit.cover,
+                          imageUrl: profileData.chatUser.profileImage.isEmpty
+                              ? 'no image'
+                              : profileData.chatUser.profileImage,
+                          progressIndicatorBuilder:
+                              (context, url, downloadProgress) => CircleAvatar(
+                            backgroundColor: Colors.black54,
+                            child: Icon(
+                              Icons.person,
+                              size: MediaQuery.of(context).size.height * 0.055,
+                              color: Colors.grey,
+                            ),
+                          ),
+                          errorWidget: (context, url, error) => CircleAvatar(
+                            backgroundColor: Colors.black54,
+                            child: Icon(
+                              Icons.person,
+                              size: MediaQuery.of(context).size.height * 0.055,
+                              color: Colors.grey,
                             ),
                           ),
                         ),
-                        TextButton(
-                          onPressed: () {
-                            showBottomSheet(context, cameras);
-                          },
-                          child: Text(
-                            'Edit picture',
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyMedium!
-                                .copyWith(
-                                  color: Colors.blueAccent,
-                                ),
-                          ),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          showBottomSheet(context, cameras);
+                        },
+                        child: Text(
+                          'Edit picture',
+                          style:
+                              Theme.of(context).textTheme.bodyMedium!.copyWith(
+                                    color: Colors.blueAccent,
+                                  ),
                         ),
-                        EditProfileItem(
-                          title: 'Name',
-                          value: profileData.chatUser.userName,
-                          onTap: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                settings: RouteSettings(
-                                    name: EditUsernamePage.routeName,
-                                    arguments: {
-                                      'userName': profileData.chatUser.userName
-                                    }),
-                                builder: (ctx) => const EditUsernamePage(),
+                      ),
+                      EditProfileItem(
+                        title: 'Name',
+                        value: profileData.chatUser.userName,
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              settings: RouteSettings(
+                                  name: EditUsernamePage.routeName,
+                                  arguments: {
+                                    'userName': profileData.chatUser.userName
+                                  }),
+                              builder: (ctx) => const EditUsernamePage(),
+                            ),
+                          );
+                        },
+                      ),
+                      EditProfileItem(
+                        title: 'Bio',
+                        value: profileData.chatUser.bio,
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              settings: RouteSettings(
+                                  name: EditBioPage.routeName,
+                                  arguments: {'bio': profileData.chatUser.bio}),
+                              builder: (ctx) => const EditBioPage(),
+                            ),
+                          );
+                        },
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              settings: RouteSettings(
+                                  name: EditGenderPage.routeName,
+                                  arguments: {
+                                    'gender': profileData.chatUser.gender
+                                  }),
+                              builder: (ctx) => const EditGenderPage(),
+                            ),
+                          );
+                        },
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'Gender',
+                              style: TextStyle(
+                                color: Colors.grey,
                               ),
-                            );
-                          },
-                        ),
-                        EditProfileItem(
-                          title: 'Bio',
-                          value: profileData.chatUser.bio,
-                          onTap: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                settings: RouteSettings(
-                                    name: EditBioPage.routeName,
-                                    arguments: {
-                                      'bio': profileData.chatUser.bio
-                                    }),
-                                builder: (ctx) => const EditBioPage(),
-                              ),
-                            );
-                          },
-                        ),
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                settings: RouteSettings(
-                                    name: EditGenderPage.routeName,
-                                    arguments: {
-                                      'gender': profileData.chatUser.gender
-                                    }),
-                                builder: (ctx) => const EditGenderPage(),
-                              ),
-                            );
-                          },
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text(
-                                'Gender',
-                                style: TextStyle(
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(profileData.chatUser.gender.isEmpty
+                                    ? 'Add gender'
+                                    : profileData.chatUser.gender),
+                                const Icon(
+                                  Icons.chevron_right,
                                   color: Colors.grey,
                                 ),
-                              ),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(profileData.chatUser.gender.isEmpty
-                                      ? 'Add gender'
-                                      : profileData.chatUser.gender),
-                                  const Icon(
-                                    Icons.chevron_right,
-                                    color: Colors.grey,
-                                  ),
-                                ],
-                              ),
-                              const Divider(),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              }),
-            ),
-            if (profileData.loadingState)
-              Container(
-                height: MediaQuery.of(context).size.height,
-                width: MediaQuery.of(context).size.width,
-                color: Colors.black45,
-                child: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      LinearProgressIndicator(
-                        backgroundColor: Colors.grey,
-                        valueColor: AlwaysStoppedAnimation<Color>(
-                          Colors.blue.withOpacity(0.5),
+                              ],
+                            ),
+                            const Divider(),
+                          ],
                         ),
                       ),
                     ],
                   ),
                 ),
               ),
-          ],
-        );
-      }),
+              if (profileData.loadingState)
+                Container(
+                  height: MediaQuery.of(context).size.height,
+                  width: MediaQuery.of(context).size.width,
+                  color: Colors.black45,
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        LinearProgressIndicator(
+                          backgroundColor: Colors.grey,
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            Colors.blue.withOpacity(0.5),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+            ],
+          );
+        }),
+      ),
     );
   }
 }

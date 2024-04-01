@@ -29,14 +29,14 @@ class _UserReelsGridViewState extends State<UserReelsGridView>
   int currentLimit = 12;
 
   void _onRefresh() async {
-    if (currentLimit >
-        Provider.of<ReelsProvider>(
-          context,
-          listen: false,
-        ).allUserReels.length) {
-      _refreshController.loadComplete();
-      return;
-    }
+    // if (currentLimit >
+    //     Provider.of<ReelsProvider>(
+    //       context,
+    //       listen: false,
+    //     ).allUserReels.length) {
+    //   _refreshController.loadComplete();
+    //   return;
+    // }
     print('refreshing');
     currentLimit = currentLimit + 12;
     await Provider.of<ReelsProvider>(context, listen: false)

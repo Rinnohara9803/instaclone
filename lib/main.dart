@@ -10,10 +10,13 @@ import 'package:instaclone/presentation/pages/EditProfile/edit_profile_page.dart
 import 'package:instaclone/presentation/pages/EditProfile/edit_username_page.dart';
 import 'package:instaclone/presentation/pages/Register/register_with_email_page.dart';
 import 'package:instaclone/presentation/pages/Register/register_with_phone_page_one.dart';
+import 'package:instaclone/presentation/pages/ShareProfile/share_profile.dart';
 import 'package:instaclone/presentation/pages/Splash/splash_page.dart';
 import 'package:instaclone/providers/chat_details_provider.dart';
+import 'package:instaclone/providers/fetch_medias_provider.dart';
 import 'package:instaclone/providers/profile_data_provider.dart';
 import 'package:instaclone/providers/profile_provider.dart';
+import 'package:instaclone/providers/share_profile_provider.dart';
 import 'package:instaclone/providers/user_posts_provider.dart';
 import 'package:instaclone/providers/user_reels_provider.dart';
 import 'package:instaclone/providers/user_stories_provider.dart';
@@ -71,6 +74,12 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider<ReelsProvider>(
           create: (context) => ReelsProvider(),
         ),
+        ChangeNotifierProvider<ShareProfileProvider>(
+          create: (ctx) => ShareProfileProvider(),
+        ),
+        ChangeNotifierProvider<FetchMediasProvider>(
+          create: (ctx) => FetchMediasProvider(),
+        ),
       ],
       child: Consumer<ThemeProvider>(
         builder: (context, themeData, _) {
@@ -118,6 +127,10 @@ class MyApp extends StatelessWidget {
                 case EditGenderPage.routeName:
                   return MaterialPageRoute(
                     builder: (ctx) => const EditGenderPage(),
+                  );
+                case ShareProfilePage.routeName:
+                  return MaterialPageRoute(
+                    builder: (ctx) => const ShareProfilePage(),
                   );
                 default:
                   throw Exception('Invalid route: ${settings.name}');

@@ -69,7 +69,6 @@ class _VideoDetailsState extends State<VideoDetails>
     _videoPlayerController.setVolume(
       Provider.of<VideoPlayerProvider>(context, listen: false).isMuted ? 0 : 1,
     );
-    _videoPlayerController.play();
 
     timerFunction();
   }

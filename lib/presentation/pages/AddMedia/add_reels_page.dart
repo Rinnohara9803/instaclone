@@ -43,6 +43,7 @@ class _AddReelsPageState extends State<AddReelsPage> {
 
   @override
   void dispose() {
+    _controller!.pause();
     _controller!.dispose();
     super.dispose();
   }

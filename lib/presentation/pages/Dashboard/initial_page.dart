@@ -78,14 +78,12 @@ class _InitialPageState extends State<InitialPage>
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: DefaultTabController(
-        initialIndex: 1,
-        length: pages!.length,
-        child: TabBarView(
-          controller: _tabController,
-          children: pages!,
-        ),
+    return DefaultTabController(
+      initialIndex: 1,
+      length: pages!.length,
+      child: TabBarView(
+        controller: _tabController,
+        children: pages!,
       ),
     );
   }

@@ -91,7 +91,6 @@ class _SelectProfilePicturePageState extends State<SelectProfilePicturePage> {
 
   @override
   Widget build(BuildContext context) {
-    print('page view is running');
     return SafeArea(
       child: Scaffold(
         body: Column(

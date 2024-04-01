@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:instaclone/models/reel_modal.dart';
 import 'package:instaclone/presentation/pages/UserReels/widgets/reel_details.dart';
-import 'package:instaclone/presentation/pages/UserReels/widgets/user_details.dart';
-import 'package:instaclone/providers/profile_provider.dart';
-import 'package:provider/provider.dart';
 
 class LatestReelsDetails extends StatefulWidget {
   final ReelModel reel;

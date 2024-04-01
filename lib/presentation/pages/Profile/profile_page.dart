@@ -4,6 +4,7 @@ import 'package:instaclone/presentation/pages/Profile/widgets/open_settings_widg
 import 'package:instaclone/presentation/pages/Profile/widgets/profile_data_widget.dart';
 import 'package:instaclone/presentation/pages/Profile/widgets/user_posts_grid_view.dart';
 import 'package:instaclone/presentation/pages/Profile/widgets/user_reels_grid_view.dart';
+import 'package:instaclone/presentation/pages/ShareProfile/share_profile.dart';
 import 'package:instaclone/presentation/resources/themes_manager.dart';
 import 'package:instaclone/providers/profile_data_provider.dart';
 import 'package:instaclone/providers/user_posts_provider.dart';
@@ -17,7 +18,6 @@ import '../../resources/constants/sizedbox_constants.dart';
 import '../Chat/chat_page.dart';
 import '../Dashboard/widgets/custom_popup_menubutton.dart';
 import '../UserPosts/user_posts_page.dart';
-import 'package:flutter/widgets.dart';
 
 class ProfilePage extends StatefulWidget {
   final ChatUser chatUser;
@@ -316,28 +316,41 @@ class _ProfilePageState extends State<ProfilePage>
                                       width: 5,
                                     ),
                                     Expanded(
-                                      child: Container(
-                                        height: 40,
-                                        decoration: BoxDecoration(
-                                          border: Border.all(
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          Navigator.of(context).push(
+                                            MaterialPageRoute(
+                                              settings: const RouteSettings(
+                                                  name: ShareProfilePage
+                                                      .routeName),
+                                              builder: (context) =>
+                                                  const ShareProfilePage(),
+                                            ),
+                                          );
+                                        },
+                                        child: Container(
+                                          height: 40,
+                                          decoration: BoxDecoration(
+                                            border: Border.all(
+                                              color: Provider.of<ThemeProvider>(
+                                                          context)
+                                                      .isLightTheme
+                                                  ? Colors.black
+                                                  : Colors.white,
+                                            ),
                                             color: Provider.of<ThemeProvider>(
                                                         context)
                                                     .isLightTheme
-                                                ? Colors.black
-                                                : Colors.white,
+                                                ? Colors.white
+                                                : const Color.fromARGB(
+                                                    255, 38, 38, 39),
+                                            borderRadius: BorderRadius.circular(
+                                              10,
+                                            ),
                                           ),
-                                          color: Provider.of<ThemeProvider>(
-                                                      context)
-                                                  .isLightTheme
-                                              ? Colors.white
-                                              : const Color.fromARGB(
-                                                  255, 38, 38, 39),
-                                          borderRadius: BorderRadius.circular(
-                                            10,
+                                          child: const Center(
+                                            child: Text('Share Profile'),
                                           ),
-                                        ),
-                                        child: const Center(
-                                          child: Text('Share Profile'),
                                         ),
                                       ),
                                     ),

@@ -1,10 +1,6 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:instaclone/models/reel_modal.dart';
-import 'package:instaclone/models/user_post.dart';
-import 'package:instaclone/presentation/pages/UserPosts/user_posts_page.dart';
 import 'package:instaclone/presentation/pages/UserReels/user_reels_page.dart';
-import 'package:instaclone/providers/user_posts_provider.dart';
 import 'package:instaclone/providers/user_reels_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
@@ -18,16 +14,6 @@ class UserReelsGridViewWidget extends StatefulWidget {
 }
 
 class UserReelsGridViewWidgetState extends State<UserReelsGridViewWidget> {
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
     final reel = Provider.of<ReelModel>(context);
@@ -92,19 +78,24 @@ class _UserReelGridViewVideoWidgetState
               alignment: Alignment.center,
               children: <Widget>[
                 VideoPlayer(_controller),
-                Positioned(
+                const Positioned(
                   bottom: 2,
                   left: 2,
                   child: Row(
                     children: [
                       Icon(
-                        Icons.play_circle,
+                        Icons.play_arrow,
                         color: Colors.white,
                       ),
-                      Text(
-                        '0',
-                        style: TextStyle(
-                          color: Colors.white,
+                      Padding(
+                        padding: EdgeInsets.only(
+                          left: 3,
+                        ),
+                        child: Text(
+                          '0',
+                          style: TextStyle(
+                            color: Colors.white,
+                          ),
                         ),
                       ),
                     ],

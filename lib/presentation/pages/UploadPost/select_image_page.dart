@@ -208,28 +208,41 @@ class _SelectImageWidgetState extends State<SelectImageWidget>
                 Row(
                   children: [
                     selectMultipleImages
-                        ? TextButton.icon(
-                            label: Text(
-                              'Select an image',
-                              style: Theme.of(context).textTheme.bodyMedium,
-                            ),
-                            onPressed: () {
+                        ? GestureDetector(
+                            onTap: () {
                               toggleSelectMultipleImages();
                             },
-                            icon: const Icon(
-                              Icons.image,
+                            child: Container(
+                              padding: const EdgeInsets.all(
+                                7,
+                              ),
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border: Border.all(),
+                                color: Colors.blueAccent,
+                              ),
+                              child: const Icon(
+                                Icons.copy,
+                                size: 18,
+                              ),
                             ),
                           )
-                        : TextButton.icon(
-                            label: Text(
-                              'Select multiple images',
-                              style: Theme.of(context).textTheme.bodyMedium,
-                            ),
-                            onPressed: () {
+                        : GestureDetector(
+                            onTap: () {
                               toggleSelectMultipleImages();
                             },
-                            icon: const Icon(
-                              Icons.grid_on_sharp,
+                            child: Container(
+                              padding: const EdgeInsets.all(
+                                7,
+                              ),
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border: Border.all(),
+                              ),
+                              child: const Icon(
+                                Icons.copy,
+                                size: 18,
+                              ),
                             ),
                           ),
                     IconButton(
@@ -265,28 +278,31 @@ class _SelectImageWidgetState extends State<SelectImageWidget>
                           : file == image;
 
                       return ImageShowWidget(
-                          file: file,
-                          isSelected: isSelected,
-                          onTap: () {
-                            if (isSelected && selectedFiles.length == 1) {
-                              return;
-                            }
-                            if (isSelected && selectMultipleImages) {
-                              setState(() {
-                                selectedFiles.remove(file);
-                              });
-                            }
-                            if (selectMultipleImages && !isSelected) {
-                              setState(() {
-                                selectedFiles.add(file);
-                                image = file;
-                              });
-                            } else {
-                              setState(() {
-                                image = file;
-                              });
-                            }
-                          });
+                        file: file,
+                        isSelected: isSelected,
+                        onTap: () {
+                          if (isSelected && selectedFiles.length == 1) {
+                            return;
+                          }
+                          if (isSelected && selectMultipleImages) {
+                            setState(() {
+                              selectedFiles.remove(file);
+                            });
+                          }
+                          if (selectMultipleImages && !isSelected) {
+                            setState(() {
+                              selectedFiles.add(file);
+                              image = file;
+                            });
+                          } else {
+                            setState(() {
+                              image = file;
+                            });
+                          }
+                        },
+                        selectMultipleImages: selectMultipleImages,
+                        selectedFiles: selectedFiles,
+                      );
                     },
                     itemCount: selectedModel!.files.length,
                   ),
