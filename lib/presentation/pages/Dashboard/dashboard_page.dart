@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:instaclone/presentation/pages/Profile/profile_page.dart';
 import 'package:instaclone/presentation/pages/UserReels/latest_reels_page.dart';
 import 'package:instaclone/presentation/resources/themes_manager.dart';
+import 'package:instaclone/providers/fetch_medias_provider.dart';
 import 'package:instaclone/providers/profile_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -64,6 +65,7 @@ class _DashboardPageState extends State<DashboardPage> {
 
   @override
   void initState() {
+    print("dashboard page init");
     super.initState();
     ChatApis.updateActiveStatus(true);
     SystemChannels.lifecycle.setMessageHandler((message) {
@@ -83,6 +85,7 @@ class _DashboardPageState extends State<DashboardPage> {
 
   @override
   Widget build(BuildContext context) {
+    print('dashboard building');
     return SafeArea(
       child: Scaffold(
         body: Column(

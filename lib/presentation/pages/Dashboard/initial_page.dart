@@ -4,6 +4,8 @@ import 'package:instaclone/presentation/pages/Chat/chats_page.dart';
 import 'package:instaclone/presentation/pages/Dashboard/dashboard_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:instaclone/providers/fetch_medias_provider.dart';
+import 'package:provider/provider.dart';
 
 import '../../../apis/chat_apis.dart';
 
@@ -74,6 +76,18 @@ class _InitialPageState extends State<InitialPage>
       vsync: this,
       initialIndex: 1,
     );
+    _tabController!.addListener(() {
+      print(_tabController!.index);
+      if (_tabController!.index == 1) {
+        print('resetting provider');
+        Provider.of<FetchMediasProvider>(context, listen: false)
+            .clearSelectedMedias();
+        Provider.of<FetchMediasProvider>(context, listen: false)
+            .toggleToSelectOneMedia();
+        Provider.of<FetchMediasProvider>(context, listen: false)
+            .disposeController();
+      }
+    });
   }
 
   @override

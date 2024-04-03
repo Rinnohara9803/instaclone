@@ -1,10 +1,10 @@
 // ignore_for_file: use_build_context_synchronously
-
-import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:instaclone/presentation/pages/AddMedia/add_story_page.dart';
 import 'package:instaclone/presentation/pages/AddMedia/select_reels_page.dart';
 import 'package:instaclone/presentation/pages/UploadPost/select_media_page.dart';
+import 'package:instaclone/providers/fetch_medias_provider.dart';
+import 'package:provider/provider.dart';
 
 class AddPostOrReelsOrStoryPage extends StatefulWidget {
   final Function navigateBack;
@@ -19,8 +19,6 @@ class _AddPostOrReelsOrStoryPageState extends State<AddPostOrReelsOrStoryPage> {
   final _pageController = PageController(initialPage: 0);
 
   int _selectedIndex = 0;
-
-  CameraDescription? _cameraDescription;
 
   void _onItemTapped(int index) {
     setState(() {

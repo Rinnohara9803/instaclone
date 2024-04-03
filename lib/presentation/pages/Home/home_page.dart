@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:instaclone/presentation/pages/Home/widgets/home_page_appbar.dart';
@@ -24,8 +25,8 @@ class _HomePageState extends State<HomePage>
   late RefreshController _refreshController;
   int postLimit = 4;
 
-  ValueNotifier _isLoadingNotifier = ValueNotifier(false);
-  ValueNotifier _hasErrorNotifier = ValueNotifier(null);
+  final ValueNotifier _isLoadingNotifier = ValueNotifier(false);
+  final ValueNotifier _hasErrorNotifier = ValueNotifier(null);
 
   @override
   void initState() {
@@ -177,30 +178,16 @@ class _HomePageState extends State<HomePage>
               ),
 
               // Latest posts
-              // FutureBuilder(
-              //     future: _fetchLatestPosts(),
-              //     builder: (context, snapshot) {
-              //       if (snapshot.connectionState == ConnectionState.waiting) {
-              //         return const SliverToBoxAdapter(
-              //           child: Center(
-              //             child: BlueRefreshIndicator(),
-              //           ),
-              //         );
-              //       } else if (snapshot.hasError) {
-              //         return SliverToBoxAdapter(
-              //           child: Center(
-              //             child: Text(snapshot.error.toString()),
-              //           ),
-              //         );
-              //       } else {
-              //         return
               ValueListenableBuilder(
                   valueListenable: _isLoadingNotifier,
                   builder: (context, value, child) {
                     if (value == true) {
-                      return const SliverToBoxAdapter(
-                        child: Center(
-                          child: BlueRefreshIndicator(),
+                      return SliverToBoxAdapter(
+                        child: SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.4,
+                          child: const Center(
+                            child: BlueRefreshIndicator(),
+                          ),
                         ),
                       );
                     } else {

@@ -326,7 +326,7 @@ class _EditStoryPageState extends State<EditStoryPage> {
                                 });
                               }).catchError((e) {
                                 SnackBars.showErrorSnackBar(
-                                    context, 'Something went wrong.');
+                                    context, e.toString());
                               });
                             } catch (e) {
                               setState(() {

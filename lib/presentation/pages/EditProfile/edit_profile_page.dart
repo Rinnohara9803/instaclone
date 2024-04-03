@@ -203,6 +203,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                               color: Theme.of(context).iconTheme.color,
                             ),
                           ),
+                          SizedBoxConstants.sizedboxw5,
                           Text(
                             'Edit Profile',
                             style: Theme.of(context).textTheme.titleSmall,

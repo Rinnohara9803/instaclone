@@ -34,6 +34,7 @@ dependencies:
   cloud_firestore: ^4.15.9
   colorfilter_generator: ^0.0.8
   cupertino_icons: ^1.0.6
+  dartz: ^0.10.1
   dio: ^5.4.1
   email_validator: ^2.1.17
   firebase_app_check: ^0.2.1+18
@@ -67,6 +68,7 @@ dependencies:
   record_mp3: ^3.0.0
   scrollable_positioned_list: ^0.3.8
   shimmer: ^3.0.0
+  smooth_page_indicator: ^1.1.0
   story_view: ^0.16.5
   video_compress: ^3.1.2
   video_player: ^2.8.3

@@ -12,7 +12,9 @@ class ChatDetails extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final chatUser = ModalRoute.of(context)!.settings.arguments as ChatUser;
+    final routeArgs =
+        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+    final chatUser = routeArgs['user'] as ChatUser;
 
     return SafeArea(
       child: DefaultTabController(

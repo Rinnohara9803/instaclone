@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:instaclone/presentation/pages/UploadPost/select_image_page.dart';
 import 'package:instaclone/presentation/pages/UploadPost/select_video_page.dart';
+import 'package:instaclone/providers/fetch_medias_provider.dart';
+import 'package:provider/provider.dart';
 
 class SelectMediaPage extends StatefulWidget {
   final Function navigateBack;
@@ -18,8 +20,16 @@ class _SelectMediaPageState extends State<SelectMediaPage> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    Provider.of<FetchMediasProvider>(context, listen: false).getImagesPath();
+    Provider.of<FetchMediasProvider>(context, listen: false).getVideosPath();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Material(
+        color: Theme.of(context).primaryColor,
         child: ValueListenableBuilder(
             valueListenable: _selectImages,
             builder: (context, value, child) {

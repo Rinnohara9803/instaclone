@@ -1,27 +1,65 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_storage_path/flutter_storage_path.dart';
+import 'package:instaclone/models/image_file_model.dart';
 import 'package:instaclone/models/video_file_model.dart';
+import 'package:video_player/video_player.dart';
 
 class FetchMediasProvider with ChangeNotifier {
-  bool _selectMultipleImages = false;
+  // Manage selected post-files
 
-  bool get selectMultipleImages {
-    return _selectMultipleImages;
+  List<dynamic> _selectedMedias = [];
+
+  List<dynamic> get selectedMedias {
+    return [..._selectedMedias];
+  }
+
+  void clearSelectedMedias() {
+    _selectedMedias = [];
+    notifyListeners();
+  }
+
+  void addMediaPostToList(dynamic mediapost) {
+    _selectedMedias.add(mediapost);
+    notifyListeners();
+  }
+
+  void removeMediaPostFromList(dynamic mediapost) {
+    _selectedMedias.remove(mediapost);
+    notifyListeners();
+  }
+
+  // Manage selected video files
+
+  VideoPlayerController? _controller;
+  Future<void>? _initializeVideoPlayerFuture;
+
+  VideoPlayerController? get controller {
+    return _controller;
+  }
+
+  Future<void>? get initializaeVideoPlayerFuture {
+    return _initializeVideoPlayerFuture;
+  }
+
+  bool _selectMultipleMedias = false;
+
+  bool get selectMultipleMedias {
+    return _selectMultipleMedias;
   }
 
   void toggleSelectMultipleImages() {
-    _selectMultipleImages = !_selectMultipleImages;
+    _selectMultipleMedias = !_selectMultipleMedias;
     notifyListeners();
-    _selectedVideos = [_selectedVideo!];
+    _selectedMedias = [];
     notifyListeners();
   }
 
-  List<Files> _selectedVideos = [];
-
-  List<Files> get selectedVideos {
-    return [..._selectedVideos];
+  void toggleToSelectOneMedia() {
+    _selectMultipleMedias = false;
+    notifyListeners();
   }
 
   List<VideoFileModel> _videoFileFolders = [];
@@ -43,16 +81,19 @@ class FetchMediasProvider with ChangeNotifier {
   }
 
   void addVideoToList(Files video) {
-    _selectedVideos = [..._selectedVideos, video];
-    notifyListeners();
+    addMediaPostToList(
+      video,
+    );
   }
 
   void removeVideoFromList(Files video) {
-    _selectedVideos.remove(video);
-    notifyListeners();
+    removeMediaPostFromList(
+      video,
+    );
   }
 
   Future<void> getVideosPath() async {
+    print('fetch videos running');
     try {
       // Path to videos folders
       var videoPath = await StoragePath.videoPath;
@@ -68,23 +109,93 @@ class FetchMediasProvider with ChangeNotifier {
         notifyListeners();
         _selectedVideo = _selectedVideoFileModel!.files[0];
         notifyListeners();
-        _selectedVideos = [_selectedVideo!];
-        notifyListeners();
       }
     } catch (e) {
       print(e.toString());
     }
   }
 
+  void initializeController() {
+    if (_controller != null) {
+      _controller!.dispose();
+    }
+    _controller = VideoPlayerController.file(File(_selectedVideo!.path));
+    _initializeVideoPlayerFuture = _controller!.initialize();
+    _controller!.play();
+  }
+
   changeVideoFileFolder(VideoFileModel vfm) {
-    print('folder change');
     _selectedVideoFileModel = vfm;
     notifyListeners();
+    _selectedVideo = vfm.files[0];
+    notifyListeners();
+    initializeController();
+  }
+
+  void setCurrentVideo() {
+    addMediaPostToList(_selectedVideo);
+  }
+
+  void setCurrentImage() {
+    addMediaPostToList(_selectedImage);
   }
 
   setSelectedVideo(Files video) {
-    print('video change');
     _selectedVideo = video;
+    notifyListeners();
+  }
+
+  void disposeController() {
+    print('controller being disposed');
+    if (_controller != null) {
+      print('controller not null');
+      _controller!.pause();
+      _controller!.dispose();
+    }
+  }
+
+  // Manage selected images
+
+  List<ImageFileModel> _imagefiles = [];
+
+  List<ImageFileModel>? get imageFiles {
+    return [..._imagefiles];
+  }
+
+  ImageFileModel? _selectedImageFolder;
+
+  ImageFileModel? get selectedImageFolder {
+    return _selectedImageFolder;
+  }
+
+  String? _selectedImage;
+
+  String? get selectedImage {
+    return _selectedImage;
+  }
+
+  Future<void> getImagesPath() async {
+    print('fetch paths running');
+    var imagePath = await StoragePath.imagesPath;
+    var images = jsonDecode(imagePath!) as List;
+    _imagefiles =
+        images.map<ImageFileModel>((e) => ImageFileModel.fromJson(e)).toList();
+    notifyListeners();
+    if (_imagefiles.isNotEmpty) {
+      _selectedImageFolder = _imagefiles[0];
+      notifyListeners();
+      _selectedImage = _selectedImageFolder!.files[0];
+      notifyListeners();
+    }
+  }
+
+  void changeImageFileFolder(ImageFileModel folder) {
+    _selectedImageFolder = folder;
+    notifyListeners();
+  }
+
+  void setSelectedImage(String image) {
+    _selectedImage = image;
     notifyListeners();
   }
 }

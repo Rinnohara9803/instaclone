@@ -160,7 +160,6 @@ class _RegisterWithPhonePageOneState extends State<RegisterWithPhonePageOne> {
                     },
                     controller: _mobileNumberController,
                     decoration: InputDecoration(
-                      fillColor: const Color.fromARGB(255, 33, 38, 63),
                       filled: true,
                       label: const Text(
                         'Mobile number',

@@ -358,8 +358,7 @@ class _ProfilePageState extends State<ProfilePage>
                                 ),
                               if (widget.chatUser.userId != user.uid)
                                 StreamBuilder(
-                                  stream: UserApis.getAllFollowings(
-                                      UserApis.user!.uid),
+                                  stream: UserApis.getAllFollowings(user.uid),
                                   builder: (context, snapshot) {
                                     final data = snapshot.data?.docs;
                                     list = [];

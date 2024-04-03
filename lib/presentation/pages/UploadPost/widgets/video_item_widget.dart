@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:instaclone/models/video_file_model.dart';
 import 'package:instaclone/providers/fetch_medias_provider.dart';
@@ -8,11 +7,9 @@ import 'package:video_compress/video_compress.dart';
 
 class VideoItemWidget extends StatefulWidget {
   final Files videoFile;
-  final Function setVideoController;
   const VideoItemWidget({
     Key? key,
     required this.videoFile,
-    required this.setVideoController,
   }) : super(key: key);
 
   @override
@@ -78,25 +75,24 @@ class _VideoItemWidgetState extends State<VideoItemWidget> {
           },
         ),
         builder: (context, fmp, child) {
-          bool isSelected = fmp.selectMultipleImages
-              ? fmp.selectedVideos.contains(widget.videoFile)
+          bool isSelected = fmp.selectMultipleMedias
+              ? fmp.selectedMedias.contains(widget.videoFile)
               : fmp.selectedVideo == widget.videoFile;
           return GestureDetector(
             onTap: () {
-              if (isSelected && fmp.selectedVideos.length == 1) {
+              if (isSelected && fmp.selectedMedias.length == 1) {
                 return;
-              }
-              if (isSelected && fmp.selectMultipleImages) {
+              } else if (isSelected && fmp.selectMultipleMedias) {
                 fmp.removeVideoFromList(widget.videoFile);
-              }
-              if (fmp.selectMultipleImages && !isSelected) {
+                fmp.setSelectedVideo(widget.videoFile);
+                fmp.initializeController();
+              } else if (fmp.selectMultipleMedias && !isSelected) {
                 fmp.addVideoToList(widget.videoFile);
                 fmp.setSelectedVideo(widget.videoFile);
-                widget.setVideoController();
+                fmp.initializeController();
               } else {
-                Provider.of<FetchMediasProvider>(context, listen: false)
-                    .setSelectedVideo(widget.videoFile);
-                widget.setVideoController();
+                fmp.setSelectedVideo(widget.videoFile);
+                fmp.initializeController();
               }
             },
             child: Stack(
@@ -120,7 +116,7 @@ class _VideoItemWidgetState extends State<VideoItemWidget> {
                     );
                   }
                 }),
-                if (fmp.selectMultipleImages && isSelected)
+                if (fmp.selectMultipleMedias && isSelected)
                   Positioned(
                     top: 4,
                     right: 8,
@@ -128,16 +124,36 @@ class _VideoItemWidgetState extends State<VideoItemWidget> {
                       padding: const EdgeInsets.all(
                         7,
                       ),
-                      decoration: const BoxDecoration(
+                      decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         color: Colors.blueAccent,
+                        border: Border.all(
+                          color: Colors.white,
+                        ),
                       ),
                       child: Text(
-                        (fmp.selectedVideos.indexOf(widget.videoFile) + 1)
+                        (fmp.selectedMedias.indexOf(widget.videoFile) + 1)
                             .toString(),
                         style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                               color: Colors.white,
                             ),
+                      ),
+                    ),
+                  ),
+                if (fmp.selectMultipleMedias && !isSelected)
+                  Positioned(
+                    top: 8,
+                    right: 8,
+                    child: Container(
+                      padding: const EdgeInsets.all(
+                        9,
+                      ),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.transparent,
+                        border: Border.all(
+                          color: Colors.white,
+                        ),
                       ),
                     ),
                   ),

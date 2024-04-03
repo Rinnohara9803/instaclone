@@ -2,10 +2,33 @@ import 'package:flutter/material.dart';
 import 'package:instaclone/apis/user_apis.dart';
 import 'package:collection/collection.dart';
 
+enum MediaType { image, video }
+
+class Media {
+  late final MediaType type;
+  late final String url;
+
+  Media({
+    required this.type,
+    required this.url,
+  });
+
+  Media.fromJson(Map<String, dynamic> json) {
+    type = json['type'] == 'image' ? MediaType.image : MediaType.video;
+    url = json['url'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final data = <String, dynamic>{};
+    data['type'] = type == MediaType.image ? 'image' : 'video';
+    data['url'] = url;
+    return data;
+  }
+}
+
 class UserPostModel with ChangeNotifier {
   UserPostModel({
-    required this.images,
-    required this.videos, // Added videos field
+    required this.medias,
     required this.location,
     required this.caption,
     required this.id,
@@ -16,8 +39,7 @@ class UserPostModel with ChangeNotifier {
     this.isBookmarked = false,
   });
 
-  late final List<Images> images;
-  late final List<String> videos; // List of video URLs
+  late final List<Media> medias;
   late final String location;
   late final String caption;
   late final String id;
@@ -102,8 +124,7 @@ class UserPostModel with ChangeNotifier {
   }
 
   UserPostModel.fromJson(Map<String, dynamic> json) {
-    images = List.from(json['images']).map((e) => Images.fromJson(e)).toList();
-    videos = List<String>.from(json['videos']); // Parse videos field
+    medias = List.from(json['medias']).map((e) => Media.fromJson(e)).toList();
     location = json['location'];
     caption = json['caption'];
     id = json['id'];
@@ -121,8 +142,7 @@ class UserPostModel with ChangeNotifier {
 
   Map<String, dynamic> toJson() {
     final data = <String, dynamic>{};
-    data['images'] = images.map((e) => e.toJson()).toList();
-    data['videos'] = videos; // Add videos field
+    data['medias'] = medias.map((e) => e.toJson()).toList();
     data['location'] = location;
     data['caption'] = caption;
     data['id'] = id;
@@ -133,32 +153,12 @@ class UserPostModel with ChangeNotifier {
   }
 }
 
-class Images {
-  Images({
-    required this.imageUrl,
-    required this.filterName,
-  });
-  late final String imageUrl;
-  late final String filterName;
-
-  Images.fromJson(Map<String, dynamic> json) {
-    imageUrl = json['imageUrl'];
-    filterName = json['filterName'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final data = <String, dynamic>{};
-    data['imageUrl'] = imageUrl;
-    data['filterName'] = filterName;
-    return data;
-  }
-}
-
 class UserID {
+  late final String userId;
+
   UserID({
     required this.userId,
   });
-  late final String userId;
 
   UserID.fromJson(Map<String, dynamic> json) {
     userId = json['userId'];
@@ -172,10 +172,11 @@ class UserID {
 }
 
 class Bookmarks {
+  late final String userId;
+
   Bookmarks({
     required this.userId,
   });
-  late final String userId;
 
   Bookmarks.fromJson(Map<String, dynamic> json) {
     userId = json['userId'];

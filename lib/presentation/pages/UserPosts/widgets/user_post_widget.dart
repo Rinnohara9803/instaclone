@@ -5,6 +5,7 @@ import 'package:instaclone/presentation/pages/UserPosts/widgets/video_post_widge
 import 'package:instaclone/utilities/my_date_util.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import '../../../../apis/chat_apis.dart';
 import '../../../../models/chat_user.dart';
 import '../../../../models/user_post.dart';
@@ -95,18 +96,15 @@ class _UserPostWidgetState extends State<UserPostWidget>
             height: 10,
           ),
 
-          if (post.videos.isNotEmpty) VideoPostWidget(post: post),
-
-          // user-post images
-          if (post.images.isNotEmpty)
+          if (post.medias.isNotEmpty)
             SizedBox(
-              height: post.images.length > 1 ? 400 : 450,
+              height: post.medias.length > 1 ? 450 : 550,
               width: double.infinity,
               child: Stack(
                 children: [
                   PageView.builder(
                     controller: _pageController,
-                    itemCount: post.images.length,
+                    itemCount: post.medias.length,
                     onPageChanged: (value) {
                       theTimer!.cancel();
                       theTimer = Timer(const Duration(seconds: 5), () {
@@ -149,35 +147,47 @@ class _UserPostWidgetState extends State<UserPostWidget>
                               mainAxisAlignment: MainAxisAlignment.center,
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                CachedNetworkImage(
-                                  height: post.images.length > 1 ? 400 : 450,
-                                  width: double.infinity,
-                                  fit: BoxFit.fitHeight,
-                                  // colorBlendMode: ColorFilters.colorFilterModels
-                                  //     .firstWhere((element) =>
-                                  //         element.filterName ==
-                                  //         post.images[index].filterName)
-                                  //     .colorFilter,
-                                  imageUrl: post.images[index].imageUrl,
-                                  progressIndicatorBuilder:
-                                      (context, url, downloadProgress) =>
-                                          Container(
-                                    height: post.images.length > 1 ? 400 : 450,
+                                if (post.medias[index].type == MediaType.image)
+                                  CachedNetworkImage(
+                                    height: post.medias.length > 1 ? 450 : 550,
                                     width: double.infinity,
-                                    color: Colors.grey,
-                                  ),
-                                  errorWidget: (context, url, error) =>
-                                      SizedBox(
-                                    height: post.images.length > 1 ? 400 : 450,
-                                    width: double.infinity,
-                                    child: const Center(
-                                      child: Icon(
-                                        Icons.error,
-                                        color: Colors.red,
+                                    fit: BoxFit.cover,
+                                    // colorBlendMode: ColorFilters.colorFilterModels
+                                    //     .firstWhere((element) =>
+                                    //         element.filterName ==
+                                    //         post.images[index].filterName)
+                                    //     .colorFilter,
+                                    imageUrl: post.medias[index].url,
+                                    progressIndicatorBuilder:
+                                        (context, url, downloadProgress) =>
+                                            Container(
+                                      height:
+                                          post.medias.length > 1 ? 400 : 550,
+                                      width: double.infinity,
+                                      color: Colors.grey,
+                                    ),
+                                    errorWidget: (context, url, error) =>
+                                        SizedBox(
+                                      height:
+                                          post.medias.length > 1 ? 400 : 550,
+                                      width: double.infinity,
+                                      child: const Center(
+                                        child: Icon(
+                                          Icons.error,
+                                          color: Colors.red,
+                                        ),
                                       ),
                                     ),
                                   ),
-                                ),
+                                if (post.medias[index].type == MediaType.video)
+                                  SizedBox(
+                                    height: post.medias.length > 1 ? 450 : 550,
+                                    width: double.infinity,
+                                    child: VideoPostWidget(
+                                      post: post,
+                                      videoUrl: post.medias[index].url,
+                                    ),
+                                  ),
                               ],
                             ),
                             if (_showFavouriteIcon)
@@ -191,7 +201,7 @@ class _UserPostWidgetState extends State<UserPostWidget>
                       );
                     },
                   ),
-                  if (post.images.length > 1)
+                  if (post.medias.length > 1)
                     Positioned(
                       top: 10,
                       right: 10,
@@ -214,7 +224,7 @@ class _UserPostWidgetState extends State<UserPostWidget>
                                 15,
                               ),
                             ),
-                            child: Text('$_currentPage/${post.images.length}')),
+                            child: Text('$_currentPage/${post.medias.length}')),
                       ),
                     ),
                 ],
@@ -265,6 +275,21 @@ class _UserPostWidgetState extends State<UserPostWidget>
                     ),
                   ],
                 ),
+                if (post.medias.length > 1)
+                  SmoothPageIndicator(
+                      controller: _pageController,
+                      count: post.medias.length,
+                      effect: const ScrollingDotsEffect(
+                        dotHeight: 5,
+                        dotWidth: 5,
+                      ),
+                      onDotClicked: (index) {
+                        _pageController.animateToPage(
+                          index,
+                          duration: const Duration(milliseconds: 400),
+                          curve: Curves.ease,
+                        );
+                      }),
                 IconButton(
                   onPressed: () async {
                     await post.toggleIsBookmarked();

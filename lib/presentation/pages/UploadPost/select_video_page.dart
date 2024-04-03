@@ -1,7 +1,4 @@
-import 'dart:convert';
-import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter_storage_path/flutter_storage_path.dart';
 import 'package:instaclone/presentation/pages/UploadPost/add_post_details_page.dart';
 import 'package:instaclone/presentation/pages/UploadPost/widgets/video_item_widget.dart';
 import 'package:instaclone/providers/fetch_medias_provider.dart';
@@ -22,48 +19,15 @@ class SelectVideoWidget extends StatefulWidget {
 }
 
 class _SelectVideoWidgetState extends State<SelectVideoWidget> {
-  VideoPlayerController? _controller;
-  Future<void>? _initializeVideoPlayerFuture;
-
-  Future<void> getVideoPaths() async {
-    var videoPath = await StoragePath.videoPath;
-    var videos = jsonDecode(videoPath!) as List;
-
-    // Video file folders
-    final videoFileFolders =
-        videos.map<VideoFileModel>((e) => VideoFileModel.fromJson(e)).toList();
-    if (videoFileFolders.isNotEmpty) {
-      final folder = videoFileFolders[videoFileFolders.length - 1];
-      final selectedVideo = folder.files[0];
-      _controller = VideoPlayerController.file(
-        File(selectedVideo.path),
-      );
-      _initializeVideoPlayerFuture = _controller!.initialize();
-      _controller!.play();
-    }
-  }
-
   @override
   void initState() {
+    Provider.of<FetchMediasProvider>(context, listen: false)
+        .initializeController();
     super.initState();
-    getVideoPaths();
-    Provider.of<FetchMediasProvider>(context, listen: false).getVideosPath();
   }
-
-  @override
-  void dispose() {
-    super.dispose();
-    _controller!.pause();
-    _controller?.dispose();
-  }
-
-  // getVideosPath() async {
-
-  // }
 
   @override
   Widget build(BuildContext context) {
-    print('running them files');
     return Material(
       child: Column(
         children: <Widget>[
@@ -74,7 +38,10 @@ class _SelectVideoWidgetState extends State<SelectVideoWidget> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
                 IconButton(
-                  icon: const Icon(Icons.clear),
+                  icon: const Icon(
+                    Icons.clear,
+                    color: Colors.black,
+                  ),
                   onPressed: () {
                     widget.navigateBack();
                   },
@@ -82,15 +49,21 @@ class _SelectVideoWidgetState extends State<SelectVideoWidget> {
                 Consumer<FetchMediasProvider>(builder: (context, fmp, child) {
                   return TextButton(
                     onPressed: () {
-                      if (fmp.selectedVideos.isEmpty) {
-                        return;
-                      } else {
-                        _controller!.pause();
-
+                      fmp.controller!.pause();
+                      if (fmp.selectedMedias.isEmpty) {
                         Navigator.of(context).push(
                           MaterialPageRoute(
-                            builder: (context) => AddPostDetailsPage(
-                                images: const [], videos: fmp.selectedVideos),
+                            builder: (ctx) => AddPostDetailsPage(
+                              medias: [fmp.selectedVideo],
+                            ),
+                          ),
+                        );
+                      } else {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (ctx) => AddPostDetailsPage(
+                              medias: fmp.selectedMedias,
+                            ),
                           ),
                         );
                       }
@@ -119,14 +92,14 @@ class _SelectVideoWidgetState extends State<SelectVideoWidget> {
                       // width: double.infinity,
                       child: GestureDetector(
                         onTap: () {
-                          if (_controller!.value.isPlaying) {
-                            _controller!.pause();
+                          if (fmp.controller!.value.isPlaying) {
+                            fmp.controller!.pause();
                           } else {
-                            _controller!.play();
+                            fmp.controller!.play();
                           }
                         },
                         child: FutureBuilder(
-                          future: _initializeVideoPlayerFuture,
+                          future: fmp.initializaeVideoPlayerFuture,
                           builder: (context, snapshot) {
                             if (snapshot.connectionState ==
                                 ConnectionState.waiting) {
@@ -145,9 +118,9 @@ class _SelectVideoWidgetState extends State<SelectVideoWidget> {
                               );
                             } else {
                               return AspectRatio(
-                                aspectRatio: _controller!.value.aspectRatio,
+                                aspectRatio: fmp.controller!.value.aspectRatio,
                                 child: VideoPlayer(
-                                  _controller!,
+                                  fmp.controller!,
                                 ),
                               );
                             }
@@ -190,13 +163,6 @@ class _SelectVideoWidgetState extends State<SelectVideoWidget> {
                       onChanged: (VideoFileModel? d) {
                         fmp.changeVideoFileFolder(d!);
                         fmp.setSelectedVideo(d.files[0]);
-                        _controller?.dispose();
-                        _controller = VideoPlayerController.file(
-                          File(fmp.selectedVideo!.path),
-                        );
-                        _initializeVideoPlayerFuture =
-                            _controller!.initialize();
-                        _controller!.play();
                       },
                       value: fmp.selectedVideoFileModel,
                       dropdownColor:
@@ -207,7 +173,7 @@ class _SelectVideoWidgetState extends State<SelectVideoWidget> {
                   ),
                   Row(
                     children: [
-                      fmp.selectMultipleImages
+                      fmp.selectMultipleMedias
                           ? GestureDetector(
                               onTap: () {
                                 fmp.toggleSelectMultipleImages();
@@ -230,6 +196,7 @@ class _SelectVideoWidgetState extends State<SelectVideoWidget> {
                           : GestureDetector(
                               onTap: () {
                                 fmp.toggleSelectMultipleImages();
+                                fmp.setCurrentVideo();
                               },
                               child: Container(
                                 padding: const EdgeInsets.all(
@@ -248,6 +215,10 @@ class _SelectVideoWidgetState extends State<SelectVideoWidget> {
                       IconButton(
                         onPressed: () {
                           widget.setImages();
+                          Provider.of<FetchMediasProvider>(
+                            context,
+                            listen: false,
+                          ).disposeController();
                         },
                         icon: const Icon(
                           Icons.camera_alt,
@@ -278,15 +249,6 @@ class _SelectVideoWidgetState extends State<SelectVideoWidget> {
 
                         return VideoItemWidget(
                           videoFile: file,
-                          setVideoController: () {
-                            _controller?.dispose();
-                            _controller = VideoPlayerController.file(
-                              File(file.path),
-                            );
-                            _initializeVideoPlayerFuture =
-                                _controller!.initialize();
-                            _controller!.play();
-                          },
                         );
                       },
                       itemCount: selectedVideoFileModel.files.length,

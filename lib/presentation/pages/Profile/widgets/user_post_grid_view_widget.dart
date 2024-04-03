@@ -42,16 +42,12 @@ class UserPostGridViewWidgetState extends State<UserPostGridViewWidget> {
         },
         child: Stack(
           children: [
-            if (post.images.isNotEmpty)
+            if (post.medias[0].type == MediaType.image)
               CachedNetworkImage(
                 fit: BoxFit.cover,
                 width: double.infinity,
                 height: constraints.maxHeight,
-                imageUrl: post.images[0].imageUrl,
-                // colorBlendMode: ColorFilters.colorFilterModels
-                //   .firstWhere((element) =>
-                //       element.filterName == post.images[0].filterName)
-                //   .colorFilter,
+                imageUrl: post.medias[0].url,
                 progressIndicatorBuilder: (context, url, downloadProgress) =>
                     Container(
                   decoration: const BoxDecoration(
@@ -68,19 +64,11 @@ class UserPostGridViewWidgetState extends State<UserPostGridViewWidget> {
                   ),
                 ),
               ),
-            if (post.images.isNotEmpty && post.images.length != 1)
-              const Positioned(
-                top: 5,
-                right: 5,
-                child: Icon(
-                  Icons.copy,
-                ),
-              ),
-            if (post.videos.isNotEmpty)
+            if (post.medias[0].type == MediaType.video)
               UserPostGridViewVideoWidget(
                 post: post,
               ),
-            if (post.videos.isNotEmpty && post.videos.length != 1)
+            if (post.medias.length > 1)
               const Positioned(
                 top: 5,
                 right: 5,
@@ -113,7 +101,7 @@ class _UserPostGridViewVideoWidgetState
   void initState() {
     _controller = VideoPlayerController.networkUrl(
       Uri.parse(
-        widget.post.videos[0],
+        widget.post.medias[0].url,
       ),
     );
     _initializeVideoPlayerFuture = _controller.initialize();

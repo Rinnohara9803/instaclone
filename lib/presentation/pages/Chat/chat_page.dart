@@ -508,10 +508,10 @@ class _ChatPageState extends State<ChatPage> {
                 },
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(
-                      MediaQuery.of(context).size.height * .3),
+                      MediaQuery.of(context).size.height * .2),
                   child: CachedNetworkImage(
-                    height: MediaQuery.of(context).size.height * 0.055,
-                    width: MediaQuery.of(context).size.height * 0.055,
+                    height: MediaQuery.of(context).size.height * 0.045,
+                    width: MediaQuery.of(context).size.height * 0.045,
                     fit: BoxFit.cover,
                     imageUrl: widget.user.profileImage,
                     progressIndicatorBuilder:
@@ -540,9 +540,17 @@ class _ChatPageState extends State<ChatPage> {
                   children: [
                     InkWell(
                       onTap: () {
-                        Navigator.of(context).pushNamed(
-                          ChatDetails.routename,
-                          arguments: widget.user,
+                        print(widget.user.bio);
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            settings: RouteSettings(
+                              name: ChatDetails.routename,
+                              arguments: {
+                                'user': widget.user,
+                              },
+                            ),
+                            builder: (ctx) => const ChatDetails(),
+                          ),
                         );
                       },
                       child: Text(

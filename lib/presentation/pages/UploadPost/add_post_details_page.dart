@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:instaclone/apis/maps_apis.dart';
-import 'package:instaclone/apis/user_apis.dart';
 import 'package:instaclone/models/user_post.dart';
 import 'package:instaclone/models/video_file_model.dart';
 
@@ -8,6 +7,7 @@ import 'package:instaclone/presentation/pages/Dashboard/initial_page.dart';
 import 'package:instaclone/presentation/pages/UploadPost/add_location_page.dart';
 import 'package:instaclone/presentation/resources/constants/sizedbox_constants.dart';
 import 'package:instaclone/presentation/resources/themes_manager.dart';
+import 'package:instaclone/providers/fetch_medias_provider.dart';
 
 import 'package:instaclone/utilities/snackbars.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -15,15 +15,16 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
-import 'package:video_player/video_player.dart';
+import 'package:video_compress/video_compress.dart';
 import '../../../providers/user_posts_provider.dart';
-import 'apply_filters_page.dart';
 
 class AddPostDetailsPage extends StatefulWidget {
-  final List<Files> videos;
-  final List<ImageFilterFile> images;
-  const AddPostDetailsPage(
-      {super.key, required this.images, required this.videos});
+  final List<dynamic> medias;
+
+  const AddPostDetailsPage({
+    super.key,
+    required this.medias,
+  });
 
   @override
   State<AddPostDetailsPage> createState() => _AddPostDetailsPageState();
@@ -32,59 +33,46 @@ class AddPostDetailsPage extends StatefulWidget {
 class _AddPostDetailsPageState extends State<AddPostDetailsPage> {
   final _captionController = TextEditingController();
   String theLocation = '';
-
-  VideoPlayerController? _controller;
-  Future<void>? _initializeVideoPlayerFuture;
+  List<Media> medias = [];
 
   void setLocation(String location) {
-    print('here' + location);
     setState(() {
       theLocation = location;
     });
   }
 
   bool _isLoading = false;
-  List<Images> imageUrls = [];
-  List<String> videoUrls = [];
 
   Future<void> getImageUrls() async {
     final user = FirebaseAuth.instance.currentUser;
     final userId = user?.uid;
 
     try {
-      if (widget.images.isEmpty) {
-        print('post videos');
-        for (var video in widget.videos) {
+      for (var media in widget.medias) {
+        if (media is String) {
           await FirebaseStorage.instance
               .ref(
-                'posts/$userId/${video.path}',
+                'posts/$userId/$media',
               )
-              .putFile(File(video.path))
-              .then((p0) {});
-
-          String videoUrl = await FirebaseStorage.instance
-              .ref('posts/$userId/${video.path}')
-              .getDownloadURL();
-          videoUrls.add(videoUrl);
-        }
-      } else {
-        for (var image in widget.images) {
-          await FirebaseStorage.instance
-              .ref(
-                'posts/$userId/${image.id}',
-              )
-              .putFile(File(image.id))
+              .putFile(File(media))
               .then((p0) {});
 
           String imageUrl = await FirebaseStorage.instance
-              .ref('posts/$userId/${image.id}')
+              .ref('posts/$userId/$media')
               .getDownloadURL();
-          imageUrls.add(
-            Images(
-              imageUrl: imageUrl,
-              filterName: image.colorFilterModel.filterName,
-            ),
-          );
+          medias.add(Media(type: MediaType.image, url: imageUrl));
+        } else {
+          await FirebaseStorage.instance
+              .ref(
+                'posts/$userId/${media.path}',
+              )
+              .putFile(File(media.path))
+              .then((p0) {});
+
+          String videoURl = await FirebaseStorage.instance
+              .ref('posts/$userId/${media.path}')
+              .getDownloadURL();
+          medias.add(Media(type: MediaType.video, url: videoURl));
         }
       }
     } catch (e) {
@@ -103,8 +91,7 @@ class _AddPostDetailsPageState extends State<AddPostDetailsPage> {
         Provider.of<UserPostsProvider>(context, listen: false).addPost(
           UserPostModel(
             id: postId,
-            images: imageUrls,
-            videos: videoUrls,
+            medias: medias,
             likes: [],
             bookmarks: [],
             caption: _captionController.text,
@@ -117,6 +104,12 @@ class _AddPostDetailsPageState extends State<AddPostDetailsPage> {
       setState(() {
         _isLoading = false;
       });
+      Provider.of<FetchMediasProvider>(context, listen: false)
+          .clearSelectedMedias();
+      Provider.of<FetchMediasProvider>(context, listen: false)
+          .disposeController();
+      Provider.of<FetchMediasProvider>(context, listen: false)
+          .toggleToSelectOneMedia();
       // ignore: use_build_context_synchronously
       Navigator.of(context)
           .pushNamedAndRemoveUntil(InitialPage.routename, (route) => false);
@@ -131,28 +124,14 @@ class _AddPostDetailsPageState extends State<AddPostDetailsPage> {
 
   @override
   void initState() {
-    if (widget.videos.isNotEmpty) {
-      _controller?.dispose();
-      _controller = VideoPlayerController.file(
-        File(widget.videos[0].path),
-      );
-      _initializeVideoPlayerFuture = _controller!.initialize();
+    for (var i in widget.medias) {
+      print(i is String);
     }
     super.initState();
   }
 
   @override
-  void dispose() {
-    _controller?.dispose();
-    _controller?.pause();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    for (var i in widget.images) {
-      print(i.colorFilterModel.filterName);
-    }
     return SafeArea(
       child: Scaffold(
         body: Stack(
@@ -170,41 +149,31 @@ class _AddPostDetailsPageState extends State<AddPostDetailsPage> {
                     appBar(),
                     Row(
                       children: [
-                        if (widget.images.isNotEmpty)
+                        if (widget.medias.isNotEmpty)
                           Stack(
                             children: [
                               SizedBox(
                                 height: 80,
                                 width: 80,
-                                child: Image.file(
-                                  File(widget.images[0].id),
-                                  fit: BoxFit.cover,
-                                ),
+                                child: widget.medias[0] is String
+                                    ? Image(
+                                        image: FileImage(
+                                          File(
+                                            widget.medias[0],
+                                          ),
+                                        ),
+                                        fit: BoxFit.cover,
+                                      )
+                                    : VideoThumbnail(
+                                        videoFile: widget.medias[0],
+                                      ),
                               ),
-                              if (widget.images.length > 1)
+                              if (widget.medias.length > 1)
                                 const Positioned(
                                   top: 5,
                                   right: 5,
                                   child: Icon(
-                                    Icons.folder_copy_sharp,
-                                  ),
-                                ),
-                            ],
-                          ),
-                        if (widget.videos.isNotEmpty)
-                          Stack(
-                            children: [
-                              SizedBox(
-                                height: 80,
-                                width: 80,
-                                child: VideoPlayer(_controller!),
-                              ),
-                              if (widget.videos.length > 1)
-                                const Positioned(
-                                  top: 5,
-                                  right: 5,
-                                  child: Icon(
-                                    Icons.folder_copy_sharp,
+                                    Icons.content_copy,
                                   ),
                                 ),
                             ],
@@ -366,6 +335,56 @@ class _AddPostDetailsPageState extends State<AddPostDetailsPage> {
           ),
         ),
       ],
+    );
+  }
+}
+
+class VideoThumbnail extends StatelessWidget {
+  final Files videoFile;
+  const VideoThumbnail({super.key, required this.videoFile});
+
+  @override
+  Widget build(BuildContext context) {
+    File? thumbnail;
+
+    Future<void> getThumbnail() async {
+      await VideoCompress.getFileThumbnail(videoFile.path,
+              quality: 50, // default(100)
+              position: -1 // default(-1)
+              )
+          .then((value) {
+        thumbnail = value;
+      }).catchError((e) {
+        print(e.toString());
+      });
+    }
+
+    return FutureBuilder(
+      future: getThumbnail(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Container(
+            color: Colors.grey,
+          );
+        } else if (snapshot.hasError) {
+          return Container(
+            color: Colors.grey,
+          );
+        } else {
+          return SizedBox(
+            height: double.infinity,
+            width: double.infinity,
+            child: Image(
+              fit: BoxFit.cover,
+              image: FileImage(
+                File(
+                  thumbnail!.path,
+                ),
+              ),
+            ),
+          );
+        }
+      },
     );
   }
 }
