@@ -1,11 +1,21 @@
+import 'dart:io';
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:gallery_saver/gallery_saver.dart';
 import 'package:instaclone/presentation/pages/ShareProfile/widgets/colored_background.dart';
 import 'package:instaclone/presentation/pages/ShareProfile/widgets/imaged_background.dart';
 import 'package:instaclone/presentation/resources/constants/sizedbox_constants.dart';
 import 'package:instaclone/providers/profile_provider.dart';
 import 'package:instaclone/providers/share_profile_provider.dart';
+import 'package:instaclone/utilities/snackbars.dart';
+import 'package:open_file/open_file.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import 'package:screenshot/screenshot.dart';
+// import 'package:share_plus/share_plus.dart';
 
 enum QrBackgroundState { color, image }
 
@@ -136,117 +146,195 @@ class _ShareProfilePageState extends State<ShareProfilePage>
                 ),
               ),
             ),
-            Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    width: double.infinity,
-                    padding: EdgeInsets.symmetric(
-                      vertical: height * 0.05,
-                    ),
-                    margin: EdgeInsets.symmetric(
-                      horizontal: width * 0.1,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(
-                        15,
+            Consumer<ShareProfileProvider>(
+                builder: (context, shareProfileData, child) {
+              return Consumer<ProfileProvider>(
+                  builder: (context, profileData, child) {
+                return Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      QrImage(
+                        height: height,
+                        width: width,
+                        shareProfileData: shareProfileData,
+                        profileData: profileData,
                       ),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        Consumer<ShareProfileProvider>(
-                            builder: (context, shareProfileData, child) {
-                          return Consumer<ProfileProvider>(
-                              builder: (context, profileData, child) {
-                            return Stack(
-                              children: [
-                                QrImageView(
-                                  data: profileData.chatUser.userId
-                                      .substring(0, 11),
-                                  version: QrVersions.min,
-                                  size: width * 0.55,
-                                ),
-                                ShaderMask(
-                                  shaderCallback: (Rect bounds) {
-                                    return LinearGradient(
-                                      begin: Alignment.topLeft,
-                                      end: Alignment.bottomRight,
-                                      colors: shareProfileData.selectedColors,
-                                    ).createShader(bounds);
-                                  },
-                                  blendMode: BlendMode.srcATop,
-                                  child: QrImageView(
-                                    data: profileData.chatUser.userId
-                                        .substring(0, 11),
-                                    version: QrVersions.auto,
-                                    size: width * 0.55,
+                      SizedBoxConstants.sizedboxh20,
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 13,
+                        ),
+                        margin: EdgeInsets.symmetric(
+                          horizontal: width * 0.1,
+                        ),
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(
+                            15,
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            ShareProfileIconWidget(
+                              icon: Icons.share,
+                              title: 'Share profile',
+                              onTap: () {},
+                            ),
+                            ShareProfileIconWidget(
+                              icon: Icons.link,
+                              title: 'Copy link',
+                              onTap: () {},
+                            ),
+                            ShareProfileIconWidget(
+                              icon: Icons.download,
+                              title: 'Download',
+                              onTap: () async {
+                                final screenshotController =
+                                    ScreenshotController();
+                                await screenshotController
+                                    .captureFromWidget(
+                                  Material(
+                                    child: Container(
+                                      width: double.infinity,
+                                      height: height,
+                                      color: Colors.black12,
+                                      child: Center(
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            QrImage(
+                                              height: height,
+                                              width: width,
+                                              shareProfileData:
+                                                  shareProfileData,
+                                              profileData: profileData,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
                                   ),
-                                ),
-                              ],
-                            );
-                          });
-                        }),
-                        SizedBoxConstants.sizedboxh10,
-                        Consumer<ShareProfileProvider>(
-                            builder: (context, spd, child) {
-                          return ShaderMask(
-                            shaderCallback: (Rect bounds) {
-                              return LinearGradient(
-                                colors: spd.selectedColors,
-                              ).createShader(bounds);
-                            },
-                            child: Consumer<ProfileProvider>(
-                                builder: (context, profileData, child) {
-                              return Text(
-                                '@${profileData.chatUser.userName}',
-                                style: const TextStyle(
-                                  fontSize: 30,
-                                  fontWeight: FontWeight.w500,
-                                  color: Colors.white,
-                                ),
-                              );
-                            }),
-                          );
-                        }),
-                      ],
-                    ),
-                  ),
-                  SizedBoxConstants.sizedboxh20,
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 13,
-                    ),
-                    margin: EdgeInsets.symmetric(
-                      horizontal: width * 0.1,
-                    ),
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(
-                        15,
+                                )
+                                    .then((Uint8List image) async {
+                                  final directory =
+                                      await getApplicationDocumentsDirectory();
+                                  final imagePath =
+                                      await File('${directory.path}/qr.png')
+                                          .create();
+                                  await imagePath.writeAsBytes(image);
+
+                                  await GallerySaver.saveImage(
+                                    imagePath.path,
+                                    albumName: 'Instaclone',
+                                  ).then((value) {
+                                    SnackBars.showNormalSnackbar(
+                                        context, 'Image downloaded.');
+                                  }).catchError((e) {
+                                    SnackBars.showErrorSnackBar(
+                                      context,
+                                      'Something went wrong.',
+                                    );
+                                  });
+
+                                  /// Share Plugin
+                                  // await Share.shareFiles([imagePath.path]);
+                                });
+                              },
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                    child: const Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        ShareProfileIconWidget(
-                            icon: Icons.share, title: 'Share profile'),
-                        ShareProfileIconWidget(
-                            icon: Icons.link, title: 'Copy link'),
-                        ShareProfileIconWidget(
-                            icon: Icons.download, title: 'Download'),
-                      ],
-                    ),
+                    ],
                   ),
-                ],
-              ),
-            ),
+                );
+              });
+            }),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class QrImage extends StatelessWidget {
+  const QrImage({
+    super.key,
+    required this.height,
+    required this.width,
+    required this.profileData,
+    required this.shareProfileData,
+  });
+
+  final double height;
+  final double width;
+  final ProfileProvider profileData;
+  final ShareProfileProvider shareProfileData;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.symmetric(
+        vertical: height * 0.05,
+      ),
+      margin: EdgeInsets.symmetric(
+        horizontal: width * 0.1,
+      ),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(
+          15,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          Stack(
+            children: [
+              QrImageView(
+                data: profileData.chatUser.userId.substring(0, 11),
+                version: QrVersions.min,
+                size: width * 0.55,
+              ),
+              ShaderMask(
+                shaderCallback: (Rect bounds) {
+                  return LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: shareProfileData.selectedColors,
+                  ).createShader(bounds);
+                },
+                blendMode: BlendMode.srcATop,
+                child: QrImageView(
+                  data: profileData.chatUser.userId.substring(0, 11),
+                  version: QrVersions.auto,
+                  size: width * 0.55,
+                ),
+              ),
+            ],
+          ),
+          SizedBoxConstants.sizedboxh10,
+          ShaderMask(
+            shaderCallback: (Rect bounds) {
+              return LinearGradient(
+                colors: shareProfileData.selectedColors,
+              ).createShader(bounds);
+            },
+            child: Text(
+              '@${profileData.chatUser.userName}',
+              style: const TextStyle(
+                fontSize: 30,
+                fontWeight: FontWeight.w500,
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -255,17 +343,23 @@ class _ShareProfilePageState extends State<ShareProfilePage>
 class ShareProfileIconWidget extends StatelessWidget {
   final IconData icon;
   final String title;
+  final Function onTap;
+
   const ShareProfileIconWidget({
     super.key,
     required this.icon,
     required this.title,
+    required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      child: Center(
-        child: GestureDetector(
+      child: GestureDetector(
+        onTap: () async {
+          await onTap();
+        },
+        child: Center(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
