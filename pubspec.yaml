@@ -47,6 +47,7 @@ dependencies:
   flutter_keyboard_visibility: ^6.0.0
   flutter_screenutil: ^5.9.0
   flutter_storage_path: ^1.0.4
+  fluttertoast: ^8.2.4
   focused_menu: ^1.0.5
   font_awesome_flutter: ^10.7.0
   gallery_saver: ^2.3.2
@@ -70,6 +71,7 @@ dependencies:
   record_mp3: ^3.0.0
   screenshot: ^2.3.0
   scrollable_positioned_list: ^0.3.8
+  share_plus: ^7.2.2
   shimmer: ^3.0.0
   smooth_page_indicator: ^1.1.0
   story_view: ^0.16.5
@@ -93,6 +95,7 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - images/
+    - audios/select_sound.wav
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
   # For details regarding adding assets from package dependencies, see

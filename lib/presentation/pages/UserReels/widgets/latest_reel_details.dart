@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:instaclone/models/reel_modal.dart';
+import 'package:instaclone/models/user_post.dart';
 import 'package:instaclone/presentation/pages/UserReels/widgets/reel_details.dart';
 
 class LatestReelsDetails extends StatefulWidget {
-  final ReelModel reel;
+  final UserPostModel reel;
   const LatestReelsDetails({super.key, required this.reel});
 
   @override
@@ -25,7 +26,7 @@ class _LatestReelsDetailsState extends State<LatestReelsDetails> {
     return PageView(
       controller: _pageController,
       children: [
-        VideoDetails(widget.reel, widget.reel.video),
+        VideoDetails(widget.reel, widget.reel.medias[0].url),
         const SizedBox(),
       ],
     );

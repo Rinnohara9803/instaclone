@@ -14,6 +14,7 @@ import 'package:instaclone/presentation/pages/ShareProfile/share_profile.dart';
 import 'package:instaclone/presentation/pages/Splash/splash_page.dart';
 import 'package:instaclone/providers/chat_details_provider.dart';
 import 'package:instaclone/providers/fetch_medias_provider.dart';
+import 'package:instaclone/providers/post_details_popop_provider.dart';
 import 'package:instaclone/providers/profile_data_provider.dart';
 import 'package:instaclone/providers/profile_provider.dart';
 import 'package:instaclone/providers/share_profile_provider.dart';
@@ -79,6 +80,9 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider<FetchMediasProvider>(
           create: (ctx) => FetchMediasProvider(),
+        ),
+        ChangeNotifierProvider<PostDetailsPopDialogProvider>(
+          create: (ctx) => PostDetailsPopDialogProvider(),
         ),
       ],
       child: Consumer<ThemeProvider>(

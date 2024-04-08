@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:instaclone/models/reel_modal.dart';
+import 'package:instaclone/models/user_post.dart';
 import 'package:instaclone/presentation/pages/UserReels/user_reels_page.dart';
 import 'package:instaclone/providers/user_reels_provider.dart';
 import 'package:provider/provider.dart';
@@ -16,7 +17,7 @@ class UserReelsGridViewWidget extends StatefulWidget {
 class UserReelsGridViewWidgetState extends State<UserReelsGridViewWidget> {
   @override
   Widget build(BuildContext context) {
-    final reel = Provider.of<ReelModel>(context);
+    final reel = Provider.of<UserPostModel>(context);
     return GestureDetector(
       onTap: () {
         Navigator.of(context).push(
@@ -36,7 +37,7 @@ class UserReelsGridViewWidgetState extends State<UserReelsGridViewWidget> {
 }
 
 class UserReelGridViewVideoWidget extends StatefulWidget {
-  final ReelModel reel;
+  final UserPostModel reel;
   const UserReelGridViewVideoWidget({super.key, required this.reel});
 
   @override
@@ -53,7 +54,7 @@ class _UserReelGridViewVideoWidgetState
   void initState() {
     _controller = VideoPlayerController.networkUrl(
       Uri.parse(
-        widget.reel.video,
+        widget.reel.medias[0].url,
       ),
     );
     _initializeVideoPlayerFuture = _controller.initialize();

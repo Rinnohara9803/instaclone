@@ -59,15 +59,15 @@ class _RegisterWithPhonePageOneState extends State<RegisterWithPhonePageOne> {
         phoneNumber: '+977${_mobileNumberController.text}',
         verificationCompleted: (_) {},
         verificationFailed: (e) {
-          SnackBars.showErrorSnackBar(context, e.toString());
+          Toasts.showErrorSnackBar(context, e.toString());
         },
         codeSent: (String verification, int? token) {},
         codeAutoRetrievalTimeout: (e) {
-          SnackBars.showErrorSnackBar(context, e.toString());
+          Toasts.showErrorSnackBar(context, e.toString());
         },
       );
     } catch (e) {
-      SnackBars.showErrorSnackBar(context, 'Email verification failed.');
+      Toasts.showErrorSnackBar(context, 'Email verification failed.');
     }
     setState(() {
       _isLoading = false;

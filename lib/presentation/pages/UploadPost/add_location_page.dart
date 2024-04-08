@@ -219,7 +219,7 @@ class _SetLocationPageState extends State<SetLocationPage> {
                                 widget.setPostLocation(location);
                                 Navigator.pop(context);
                               } catch (e) {
-                                SnackBars.showErrorSnackBar(
+                                Toasts.showErrorSnackBar(
                                     context, ('Something went wrong.'));
                                 Navigator.pop(context);
                               }

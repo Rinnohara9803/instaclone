@@ -4,6 +4,8 @@ import 'package:collection/collection.dart';
 
 enum MediaType { image, video }
 
+enum PostType { post, reel }
+
 class Media {
   late final MediaType type;
   late final String url;
@@ -35,6 +37,7 @@ class UserPostModel with ChangeNotifier {
     required this.likes,
     required this.bookmarks,
     required this.userId,
+    required this.postType,
     this.isLiked = false,
     this.isBookmarked = false,
   });
@@ -46,6 +49,7 @@ class UserPostModel with ChangeNotifier {
   late final List<UserID> likes;
   late final List<Bookmarks> bookmarks;
   late final String userId;
+  late final PostType postType;
   late bool isLiked;
   late bool isBookmarked;
 
@@ -132,6 +136,7 @@ class UserPostModel with ChangeNotifier {
     bookmarks =
         List.from(json['bookmarks']).map((e) => Bookmarks.fromJson(e)).toList();
     userId = json['userId'];
+    postType = json['postType'] == 'post' ? PostType.post : PostType.reel;
     isLiked = likes.firstWhereOrNull(
             (element) => element.userId == UserApis.user!.uid) !=
         null;
@@ -149,6 +154,7 @@ class UserPostModel with ChangeNotifier {
     data['likes'] = likes.map((e) => e.toJson()).toList();
     data['bookmarks'] = bookmarks.map((e) => e.toJson()).toList();
     data['userId'] = userId;
+    data['postType'] = postType == PostType.post ? 'post' : 'reel';
     return data;
   }
 }

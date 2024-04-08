@@ -42,10 +42,10 @@ class EditUsernamePage extends StatelessWidget {
                   textEditingController.text.trim(),
                 )
                     .then((value) {
-                  SnackBars.showNormalSnackbar(
+                  Toasts.showNormalSnackbar(
                       context, ('Your username has been updated.'));
                 }).catchError((e) {
-                  SnackBars.showErrorSnackBar(context, (e.toString()));
+                  Toasts.showErrorSnackBar(context, (e.toString()));
                 });
               },
               icon: const Icon(

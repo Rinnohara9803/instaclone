@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:instaclone/models/reel_modal.dart';
+import 'package:instaclone/models/user_post.dart';
 import 'package:instaclone/presentation/pages/AddMedia/widgets/overlayed_widget.dart';
 import 'package:instaclone/presentation/pages/Dashboard/initial_page.dart';
 import 'package:instaclone/providers/user_reels_provider.dart';
@@ -303,12 +304,17 @@ class _AddReelsPageState extends State<AddReelsPage> {
                                 await Provider.of<ReelsProvider>(context,
                                         listen: false)
                                     .postReel(
-                                  ReelModel(
-                                    video: videoUrl,
+                                  UserPostModel(
+                                    postType: PostType.reel,
+                                    medias: [
+                                      Media(
+                                        type: MediaType.video,
+                                        url: videoUrl,
+                                      ),
+                                    ],
                                     location: 'test',
                                     caption: '',
                                     id: createdAt.toString(),
-                                    createdAt: createdAt,
                                     likes: [],
                                     bookmarks: [],
                                     userId: userId,
@@ -317,7 +323,7 @@ class _AddReelsPageState extends State<AddReelsPage> {
                                     .then((value) {
                                   Navigator.of(context).pushNamedAndRemoveUntil(
                                       InitialPage.routename, (route) => false);
-                                  SnackBars.showNormalSnackbar(
+                                  Toasts.showNormalSnackbar(
                                       context, 'Your reel has been posted.');
                                   setState(() {
                                     _isLoading = false;
@@ -328,8 +334,7 @@ class _AddReelsPageState extends State<AddReelsPage> {
                               setState(() {
                                 _isLoading = false;
                               });
-                              SnackBars.showErrorSnackBar(
-                                  context, e.toString());
+                              Toasts.showErrorSnackBar(context, e.toString());
                             }
                           },
                           icon: const Icon(

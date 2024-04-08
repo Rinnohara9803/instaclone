@@ -91,7 +91,15 @@ class _UserPostWidgetState extends State<UserPostWidget>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // user details
-          PostUserDetails(userId: post.userId),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              PostUserDetails(userId: post.userId),
+              const Icon(
+                Icons.more_vert,
+              ),
+            ],
+          ),
           const SizedBox(
             height: 10,
           ),

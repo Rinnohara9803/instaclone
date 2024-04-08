@@ -76,7 +76,7 @@ class _AddPostDetailsPageState extends State<AddPostDetailsPage> {
         }
       }
     } catch (e) {
-      SnackBars.showErrorSnackBar(context, e.toString());
+      Toasts.showErrorSnackBar(context, e.toString());
     }
   }
 
@@ -96,6 +96,7 @@ class _AddPostDetailsPageState extends State<AddPostDetailsPage> {
             bookmarks: [],
             caption: _captionController.text,
             userId: userId,
+            postType: PostType.post,
             location: theLocation,
           ),
         );
@@ -113,12 +114,12 @@ class _AddPostDetailsPageState extends State<AddPostDetailsPage> {
       // ignore: use_build_context_synchronously
       Navigator.of(context)
           .pushNamedAndRemoveUntil(InitialPage.routename, (route) => false);
-      SnackBars.showNormalSnackbar(context, 'Post upload successful.');
+      Toasts.showNormalSnackbar(context, 'Post upload successful.');
     } catch (e) {
       setState(() {
         _isLoading = false;
       });
-      SnackBars.showErrorSnackBar(context, e.toString());
+      Toasts.showErrorSnackBar(context, e.toString());
     }
   }
 
@@ -229,7 +230,7 @@ class _AddPostDetailsPageState extends State<AddPostDetailsPage> {
                             _isLoading = false;
                           });
                         }).catchError((e) {
-                          SnackBars.showErrorSnackBar(
+                          Toasts.showErrorSnackBar(
                               context, 'Something went wrong.');
                           setState(() {
                             _isLoading = false;

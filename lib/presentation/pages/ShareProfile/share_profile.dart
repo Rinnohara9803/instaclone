@@ -1,21 +1,19 @@
 import 'dart:io';
 import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:gallery_saver/gallery_saver.dart';
 import 'package:instaclone/presentation/pages/ShareProfile/widgets/colored_background.dart';
 import 'package:instaclone/presentation/pages/ShareProfile/widgets/imaged_background.dart';
+import 'package:instaclone/presentation/pages/ShareProfile/widgets/qr_image.dart';
+import 'package:instaclone/presentation/pages/ShareProfile/widgets/share_profile_icon_widget.dart';
 import 'package:instaclone/presentation/resources/constants/sizedbox_constants.dart';
 import 'package:instaclone/providers/profile_provider.dart';
 import 'package:instaclone/providers/share_profile_provider.dart';
 import 'package:instaclone/utilities/snackbars.dart';
-import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
-import 'package:qr_flutter/qr_flutter.dart';
 import 'package:screenshot/screenshot.dart';
-// import 'package:share_plus/share_plus.dart';
+import 'package:share_plus/share_plus.dart';
 
 enum QrBackgroundState { color, image }
 
@@ -51,6 +49,63 @@ class _ShareProfilePageState extends State<ShareProfilePage>
   void dispose() {
     _animationController.dispose();
     super.dispose();
+  }
+
+  Future<Uint8List> getQrImage(
+      double height,
+      double width,
+      ShareProfileProvider shareProfileData,
+      ProfileProvider profileData) async {
+    final screenshotController = ScreenshotController();
+    Uint8List image = await screenshotController.captureFromWidget(
+      Material(
+        child: Stack(
+          children: [
+            Center(
+              child: Container(
+                width: double.infinity,
+                height: height * 0.8,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: shareProfileData.selectedColors,
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                ),
+                child: shareProfileData.currentBackgroundState ==
+                        QrBackgroundState.color
+                    ? null
+                    : shareProfileData.selectedImagePath.isEmpty
+                        ? null
+                        : Image(
+                            fit: BoxFit.cover,
+                            image: FileImage(
+                              File(
+                                shareProfileData.selectedImagePath,
+                              ),
+                            ),
+                          ),
+              ),
+            ),
+            Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  QrImageWidget(
+                    height: height,
+                    width: width,
+                    shareProfileData: shareProfileData,
+                    profileData: profileData,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+
+    return image;
   }
 
   @override
@@ -154,7 +209,7 @@ class _ShareProfilePageState extends State<ShareProfilePage>
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      QrImage(
+                      QrImageWidget(
                         height: height,
                         width: width,
                         shareProfileData: shareProfileData,
@@ -181,44 +236,40 @@ class _ShareProfilePageState extends State<ShareProfilePage>
                             ShareProfileIconWidget(
                               icon: Icons.share,
                               title: 'Share profile',
-                              onTap: () {},
+                              onTap: () async {
+                                await getQrImage(height, width,
+                                        shareProfileData, profileData)
+                                    .then(
+                                  (Uint8List image) async {
+                                    final directory =
+                                        await getApplicationDocumentsDirectory();
+                                    final imagePath =
+                                        await File('${directory.path}/qr.png')
+                                            .create();
+                                    await imagePath.writeAsBytes(image);
+
+                                    await Share.shareXFiles([
+                                      XFile(
+                                        imagePath.path,
+                                      ),
+                                    ]);
+                                  },
+                                );
+                              },
+                              disabled: false,
                             ),
                             ShareProfileIconWidget(
                               icon: Icons.link,
                               title: 'Copy link',
                               onTap: () {},
+                              disabled: true,
                             ),
                             ShareProfileIconWidget(
                               icon: Icons.download,
                               title: 'Download',
                               onTap: () async {
-                                final screenshotController =
-                                    ScreenshotController();
-                                await screenshotController
-                                    .captureFromWidget(
-                                  Material(
-                                    child: Container(
-                                      width: double.infinity,
-                                      height: height,
-                                      color: Colors.black12,
-                                      child: Center(
-                                        child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            QrImage(
-                                              height: height,
-                                              width: width,
-                                              shareProfileData:
-                                                  shareProfileData,
-                                              profileData: profileData,
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                )
+                                getQrImage(height, width, shareProfileData,
+                                        profileData)
                                     .then((Uint8List image) async {
                                   final directory =
                                       await getApplicationDocumentsDirectory();
@@ -231,10 +282,10 @@ class _ShareProfilePageState extends State<ShareProfilePage>
                                     imagePath.path,
                                     albumName: 'Instaclone',
                                   ).then((value) {
-                                    SnackBars.showNormalSnackbar(
+                                    Toasts.showNormalSnackbar(
                                         context, 'Image downloaded.');
                                   }).catchError((e) {
-                                    SnackBars.showErrorSnackBar(
+                                    Toasts.showErrorSnackBar(
                                       context,
                                       'Something went wrong.',
                                     );
@@ -244,6 +295,7 @@ class _ShareProfilePageState extends State<ShareProfilePage>
                                   // await Share.shareFiles([imagePath.path]);
                                 });
                               },
+                              disabled: false,
                             ),
                           ],
                         ),
@@ -254,137 +306,6 @@ class _ShareProfilePageState extends State<ShareProfilePage>
               });
             }),
           ],
-        ),
-      ),
-    );
-  }
-}
-
-class QrImage extends StatelessWidget {
-  const QrImage({
-    super.key,
-    required this.height,
-    required this.width,
-    required this.profileData,
-    required this.shareProfileData,
-  });
-
-  final double height;
-  final double width;
-  final ProfileProvider profileData;
-  final ShareProfileProvider shareProfileData;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.symmetric(
-        vertical: height * 0.05,
-      ),
-      margin: EdgeInsets.symmetric(
-        horizontal: width * 0.1,
-      ),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(
-          15,
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          Stack(
-            children: [
-              QrImageView(
-                data: profileData.chatUser.userId.substring(0, 11),
-                version: QrVersions.min,
-                size: width * 0.55,
-              ),
-              ShaderMask(
-                shaderCallback: (Rect bounds) {
-                  return LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: shareProfileData.selectedColors,
-                  ).createShader(bounds);
-                },
-                blendMode: BlendMode.srcATop,
-                child: QrImageView(
-                  data: profileData.chatUser.userId.substring(0, 11),
-                  version: QrVersions.auto,
-                  size: width * 0.55,
-                ),
-              ),
-            ],
-          ),
-          SizedBoxConstants.sizedboxh10,
-          ShaderMask(
-            shaderCallback: (Rect bounds) {
-              return LinearGradient(
-                colors: shareProfileData.selectedColors,
-              ).createShader(bounds);
-            },
-            child: Text(
-              '@${profileData.chatUser.userName}',
-              style: const TextStyle(
-                fontSize: 30,
-                fontWeight: FontWeight.w500,
-                color: Colors.white,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class ShareProfileIconWidget extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final Function onTap;
-
-  const ShareProfileIconWidget({
-    super.key,
-    required this.icon,
-    required this.title,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Expanded(
-      child: GestureDetector(
-        onTap: () async {
-          await onTap();
-        },
-        child: Center(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Container(
-                padding: const EdgeInsets.all(
-                  15,
-                ),
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(color: Colors.grey),
-                ),
-                child: Center(
-                  child: Icon(
-                    icon,
-                    size: 25,
-                  ),
-                ),
-              ),
-              SizedBoxConstants.sizedboxh5,
-              Text(
-                title,
-                style: Theme.of(context).textTheme.bodySmall,
-              )
-            ],
-          ),
         ),
       ),
     );

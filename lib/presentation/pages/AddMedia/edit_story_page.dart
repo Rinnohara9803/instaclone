@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:instaclone/models/story.dart';
+import 'package:instaclone/models/user_post.dart';
 import 'package:instaclone/presentation/pages/AddMedia/widgets/overlayed_widget.dart';
 import 'package:instaclone/presentation/pages/Dashboard/initial_page.dart';
 import 'package:instaclone/presentation/resources/themes_manager.dart';
@@ -319,21 +320,19 @@ class _EditStoryPageState extends State<EditStoryPage> {
                                   .then((value) {
                                 Navigator.of(context).pushNamedAndRemoveUntil(
                                     InitialPage.routename, (route) => false);
-                                SnackBars.showNormalSnackbar(
+                                Toasts.showNormalSnackbar(
                                     context, 'Your story has been posted.');
                                 setState(() {
                                   _isLoading = false;
                                 });
                               }).catchError((e) {
-                                SnackBars.showErrorSnackBar(
-                                    context, e.toString());
+                                Toasts.showErrorSnackBar(context, e.toString());
                               });
                             } catch (e) {
                               setState(() {
                                 _isLoading = false;
                               });
-                              SnackBars.showErrorSnackBar(
-                                  context, e.toString());
+                              Toasts.showErrorSnackBar(context, e.toString());
                             }
                           },
                           icon: const Icon(

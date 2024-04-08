@@ -2,9 +2,11 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
 import 'package:instaclone/presentation/pages/Profile/profile_page.dart';
+import 'package:instaclone/presentation/pages/Profile/widgets/user_post_grid_view_widget.dart';
 import 'package:instaclone/presentation/pages/UserReels/latest_reels_page.dart';
 import 'package:instaclone/presentation/resources/themes_manager.dart';
 import 'package:instaclone/providers/fetch_medias_provider.dart';
+import 'package:instaclone/providers/post_details_popop_provider.dart';
 import 'package:instaclone/providers/profile_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -129,79 +131,104 @@ class _DashboardPageState extends State<DashboardPage> {
         ),
 
         // primary bottom-nav-bar for dashboard
-        bottomNavigationBar: SizedBox(
-          height: 70,
-          child: BottomNavigationBar(
-            items: <BottomNavigationBarItem>[
-              BottomNavigationBarItem(
-                icon: _selectedIndex == 0
-                    ? const Icon(Icons.home)
-                    : const Icon(Icons.home_outlined),
-                label: '',
-              ),
-              BottomNavigationBarItem(
-                icon: _selectedIndex == 1
-                    ? const Icon(Icons.search_rounded)
-                    : const Icon(Icons.search_outlined),
-                label: '',
-              ),
-              BottomNavigationBarItem(
-                icon: _selectedIndex == 2
-                    ? const Icon(Icons.add_box)
-                    : const Icon(Icons.add_box_outlined),
-                label: '',
-              ),
-              BottomNavigationBarItem(
-                icon: _selectedIndex == 3
-                    ? const Icon(Icons.movie_creation_rounded)
-                    : const Icon(Icons.movie_creation_outlined),
-                label: '',
-              ),
-              BottomNavigationBarItem(
-                icon: Container(
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(
-                        width: _selectedIndex == 4 ? 2 : 1,
-                        color: Theme.of(context).errorColor),
-                    color: Theme.of(context).primaryColor,
+        bottomNavigationBar: Stack(
+          children: [
+            SizedBox(
+              height: 70,
+              child: BottomNavigationBar(
+                items: <BottomNavigationBarItem>[
+                  BottomNavigationBarItem(
+                    icon: _selectedIndex == 0
+                        ? const Icon(Icons.home)
+                        : const Icon(Icons.home_outlined),
+                    label: '',
                   ),
-                  child: Consumer<ProfileProvider>(
-                      builder: (context, profileData, child) {
-                    return ClipRRect(
-                      borderRadius: BorderRadius.circular(
-                          MediaQuery.of(context).size.height * .2),
-                      child: CachedNetworkImage(
-                        height: MediaQuery.of(context).size.height * 0.025,
-                        width: MediaQuery.of(context).size.height * 0.025,
-                        fit: BoxFit.cover,
-                        imageUrl: profileData.chatUser.profileImage.isEmpty
-                            ? 'no image'
-                            : profileData.chatUser.profileImage,
-                        progressIndicatorBuilder:
-                            (context, url, downloadProgress) => Icon(
-                          Icons.person,
-                          size: MediaQuery.of(context).size.height * 0.020,
-                          color: Colors.grey,
-                        ),
-                        errorWidget: (context, url, error) => Icon(
-                          Icons.person,
-                          size: MediaQuery.of(context).size.height * 0.020,
-                          color: Colors.grey,
-                        ),
+                  BottomNavigationBarItem(
+                    icon: _selectedIndex == 1
+                        ? const Icon(Icons.search_rounded)
+                        : const Icon(Icons.search_outlined),
+                    label: '',
+                  ),
+                  BottomNavigationBarItem(
+                    icon: _selectedIndex == 2
+                        ? const Icon(Icons.add_box)
+                        : const Icon(Icons.add_box_outlined),
+                    label: '',
+                  ),
+                  BottomNavigationBarItem(
+                    icon: _selectedIndex == 3
+                        ? const Icon(Icons.movie_creation_rounded)
+                        : const Icon(Icons.movie_creation_outlined),
+                    label: '',
+                  ),
+                  BottomNavigationBarItem(
+                    icon: Container(
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                            width: _selectedIndex == 4 ? 2 : 1,
+                            color: Theme.of(context).errorColor),
+                        color: Theme.of(context).primaryColor,
                       ),
-                    );
-                  }),
-                ),
-                label: '',
+                      child: Consumer<ProfileProvider>(
+                          builder: (context, profileData, child) {
+                        return ClipRRect(
+                          borderRadius: BorderRadius.circular(
+                            MediaQuery.of(context).size.height * .2,
+                          ),
+                          child: CachedNetworkImage(
+                            height: MediaQuery.of(context).size.height * 0.025,
+                            width: MediaQuery.of(context).size.height * 0.025,
+                            fit: BoxFit.cover,
+                            imageUrl: profileData.chatUser.profileImage.isEmpty
+                                ? 'no image'
+                                : profileData.chatUser.profileImage,
+                            progressIndicatorBuilder:
+                                (context, url, downloadProgress) => Icon(
+                              Icons.person,
+                              size: MediaQuery.of(context).size.height * 0.020,
+                              color: Colors.grey,
+                            ),
+                            errorWidget: (context, url, error) => Icon(
+                              Icons.person,
+                              size: MediaQuery.of(context).size.height * 0.020,
+                              color: Colors.grey,
+                            ),
+                          ),
+                        );
+                      }),
+                    ),
+                    label: '',
+                  ),
+                ],
+                type: BottomNavigationBarType.fixed,
+                currentIndex: _selectedIndex,
+                iconSize: 25,
+                onTap: _onItemTapped,
+                elevation: 10,
               ),
-            ],
-            type: BottomNavigationBarType.fixed,
-            currentIndex: _selectedIndex,
-            iconSize: 25,
-            onTap: _onItemTapped,
-            elevation: 10,
-          ),
+            ),
+            Positioned(
+              bottom: 0,
+              right: 0,
+              left: 0,
+              child: Consumer<PostDetailsPopDialogProvider>(
+                builder: (ctx, data, child) {
+                  if (data.showDialog == false) {
+                    return const SizedBox();
+                  } else {
+                    return Container(
+                      height: 70,
+                      width: double.infinity,
+                      color: Provider.of<ThemeProvider>(context).isLightTheme
+                          ? Colors.black45
+                          : Colors.white54,
+                    );
+                  }
+                },
+              ),
+            ),
+          ],
         ),
       ),
     );

@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:instaclone/models/story.dart';
+import 'package:instaclone/models/user_post.dart';
 import 'package:instaclone/presentation/resources/constants/sizedbox_constants.dart';
 import 'package:instaclone/providers/user_stories_provider.dart';
 import 'package:instaclone/utilities/my_date_util.dart';

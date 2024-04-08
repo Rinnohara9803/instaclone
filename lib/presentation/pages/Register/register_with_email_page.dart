@@ -66,7 +66,7 @@ class _RegisterWithEmailPageOneState extends State<RegisterWithEmailPageOne> {
         Navigator.of(context).pushNamed(VerifyEmailPage.routename);
       });
     } catch (e) {
-      SnackBars.showErrorSnackBar(context, e.toString());
+      Toasts.showErrorSnackBar(context, e.toString());
     }
     setState(() {
       _isLoading = false;

@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:instaclone/models/reel_modal.dart';
+import 'package:instaclone/models/user_post.dart';
 import 'package:instaclone/presentation/pages/UserReels/widgets/reel_details.dart';
 
 class UserReelsDetails extends StatefulWidget {
-  final ReelModel reel;
+  final UserPostModel reel;
   const UserReelsDetails({super.key, required this.reel});
 
   @override
@@ -14,7 +15,7 @@ class _UserReelsDetailsState extends State<UserReelsDetails> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: VideoDetails(widget.reel, widget.reel.video),
+      body: VideoDetails(widget.reel, widget.reel.medias[0].url),
     );
   }
 }

@@ -89,10 +89,10 @@ class _FilterHeaderState extends State<FilterHeader> {
                 await Provider.of<ProfileProvider>(context, listen: false)
                     .editProfileImage(widget.imagePath)
                     .then((value) {
-                  SnackBars.showNormalSnackbar(
+                  Toasts.showNormalSnackbar(
                       context, ('Your profile picture has been updated.'));
                 }).catchError((e) {
-                  SnackBars.showErrorSnackBar(context, (e.toString()));
+                  Toasts.showErrorSnackBar(context, (e.toString()));
                 });
               },
               child: const Text(

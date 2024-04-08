@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:instaclone/models/reel_modal.dart';
+import 'package:instaclone/models/user_post.dart';
 import 'package:instaclone/presentation/pages/UserPosts/widgets/animated_favorite_widget.dart';
 import 'package:instaclone/presentation/pages/UserPosts/widgets/post_user_details.dart';
 import 'package:instaclone/providers/video_provider.dart';
@@ -10,7 +11,7 @@ import 'package:video_player/video_player.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
 class VideoDetails extends StatefulWidget {
-  final ReelModel reel;
+  final UserPostModel reel;
   final String videoUrl;
 
   const VideoDetails(this.reel, this.videoUrl, {super.key});
@@ -185,10 +186,10 @@ class _VideoDetailsState extends State<VideoDetails>
               );
             }),
             if (_showFavouriteIcon)
-              AnimatedFavoriteWidgetForReel(
+              AnimatedFavoriteWidget(
                 animationController1: _animationController1,
                 animation1: _animation1,
-                reel: widget.reel,
+                post: widget.reel,
               ),
             Positioned(
               bottom: 55,

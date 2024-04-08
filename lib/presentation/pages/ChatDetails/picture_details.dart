@@ -36,12 +36,12 @@ class _PictureDetailsState extends State<PictureDetails> {
       final file = File('${directory.path}/image.jpg');
       await file.writeAsBytes(response.data);
 
-      SnackBars.showNormalSnackbar(
+      Toasts.showNormalSnackbar(
         context,
         'Image downloaded successfully.',
       );
     } catch (e) {
-      SnackBars.showErrorSnackBar(context, 'Failed to download image.');
+      Toasts.showErrorSnackBar(context, 'Failed to download image.');
     }
   }
 

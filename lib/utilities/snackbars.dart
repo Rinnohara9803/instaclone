@@ -1,56 +1,44 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:instaclone/presentation/resources/colors_manager.dart';
 
-class SnackBars {
+class Toasts {
   static void showNormalSnackbar(BuildContext context, String content) {
-    ScaffoldMessenger.of(context).hideCurrentSnackBar();
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          content,
-          style: const TextStyle(color: Colors.white),
-        ),
-        duration: const Duration(
-          milliseconds: 2000,
-        ),
-        backgroundColor: Colors.black12,
-        behavior: SnackBarBehavior.floating,
-      ),
+    Fluttertoast.cancel();
+    Fluttertoast.showToast(
+      msg: content,
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.CENTER,
+      timeInSecForIosWeb: 1,
+      backgroundColor: Colors.black54,
+      textColor: Colors.white,
+      fontSize: 16.0,
     );
   }
 
   static void showErrorSnackBar(BuildContext context, String content) {
-    ScaffoldMessenger.of(context).hideCurrentSnackBar();
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        behavior: SnackBarBehavior.floating,
-        content: Text(
-          content,
-          style: const TextStyle(color: Colors.white),
-        ),
-        backgroundColor: Colors.black12,
-        duration: const Duration(
-          milliseconds: 2000,
-        ),
-      ),
+    Fluttertoast.cancel();
+    Fluttertoast.showToast(
+      msg: content,
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.CENTER,
+      timeInSecForIosWeb: 1,
+      backgroundColor: Colors.black54,
+      textColor: Colors.white,
+      fontSize: 16.0,
     );
   }
 
   static void showNoInternetConnectionSnackBar(BuildContext context) {
-    ScaffoldMessenger.of(context).hideCurrentSnackBar();
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text(
-          'No internet connection.',
-          style: TextStyle(
-            color: Colors.white,
-          ),
-        ),
-        duration: Duration(
-          milliseconds: 2000,
-        ),
-        backgroundColor: Colors.black12,
-      ),
+    Fluttertoast.cancel();
+    Fluttertoast.showToast(
+      msg: 'No internet connection.',
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.CENTER,
+      timeInSecForIosWeb: 1,
+      backgroundColor: Colors.black54,
+      textColor: Colors.white,
+      fontSize: 16.0,
     );
   }
 }

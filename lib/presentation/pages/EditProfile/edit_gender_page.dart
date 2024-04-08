@@ -76,10 +76,10 @@ class _EditGenderPageState extends State<EditGenderPage> {
                 await Provider.of<ProfileProvider>(context, listen: false)
                     .editGender(getGender())
                     .then((value) {
-                  SnackBars.showNormalSnackbar(
+                  Toasts.showNormalSnackbar(
                       context, ('Your gender has been updated.'));
                 }).catchError((e) {
-                  SnackBars.showErrorSnackBar(context, (e.toString()));
+                  Toasts.showErrorSnackBar(context, (e.toString()));
                 });
               },
               icon: const Icon(

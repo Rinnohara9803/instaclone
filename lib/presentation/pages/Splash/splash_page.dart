@@ -44,11 +44,11 @@ class _SplashPageState extends State<SplashPage> {
             Navigator.pushReplacementNamed(context, InitialPage.routename);
           });
         } on SocketException catch (e) {
-          SnackBars.showErrorSnackBar(context, e.toString());
+          Toasts.showErrorSnackBar(context, e.toString());
           Navigator.pushReplacementNamed(context, LoginPage.routename);
         } catch (e) {
           print(e);
-          SnackBars.showErrorSnackBar(context, e.toString());
+          Toasts.showErrorSnackBar(context, e.toString());
           Navigator.pushReplacementNamed(context, LoginPage.routename);
         }
       }

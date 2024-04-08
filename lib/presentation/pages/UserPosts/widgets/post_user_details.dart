@@ -26,50 +26,40 @@ class PostUserDetails extends StatelessWidget {
             horizontal: 10,
           ),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Row(
-                children: [
-                  // image avatar
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(
-                        MediaQuery.of(context).size.height * .2),
-                    child: CachedNetworkImage(
-                      height: MediaQuery.of(context).size.height * 0.045,
-                      width: MediaQuery.of(context).size.height * 0.045,
-                      fit: BoxFit.cover,
-                      imageUrl:
-                          list.isEmpty ? 'no image' : list[0].profileImage,
-                      progressIndicatorBuilder:
-                          (context, url, downloadProgress) =>
-                              const CircleAvatar(
-                        backgroundColor: Colors.black54,
-                        child: Icon(
-                          Icons.person,
-                          color: Colors.grey,
-                        ),
-                      ),
-                      errorWidget: (context, url, error) => const CircleAvatar(
-                        backgroundColor: Colors.black54,
-                        child: Icon(
-                          Icons.person,
-                          color: Colors.grey,
-                        ),
-                      ),
+              // image avatar
+              ClipRRect(
+                borderRadius: BorderRadius.circular(
+                    MediaQuery.of(context).size.height * .2),
+                child: CachedNetworkImage(
+                  height: MediaQuery.of(context).size.height * 0.045,
+                  width: MediaQuery.of(context).size.height * 0.045,
+                  fit: BoxFit.cover,
+                  imageUrl: list.isEmpty ? 'no image' : list[0].profileImage,
+                  progressIndicatorBuilder: (context, url, downloadProgress) =>
+                      const CircleAvatar(
+                    backgroundColor: Colors.black54,
+                    child: Icon(
+                      Icons.person,
+                      color: Colors.grey,
                     ),
                   ),
-                  const SizedBox(
-                    width: 10,
+                  errorWidget: (context, url, error) => const CircleAvatar(
+                    backgroundColor: Colors.black54,
+                    child: Icon(
+                      Icons.person,
+                      color: Colors.grey,
+                    ),
                   ),
-
-                  // username
-                  Text(
-                    list.isEmpty ? '' : list[0].userName,
-                  ),
-                ],
+                ),
               ),
-              const Icon(
-                Icons.more_vert,
+              const SizedBox(
+                width: 10,
+              ),
+
+              // username
+              Text(
+                list.isEmpty ? '' : list[0].userName,
               ),
             ],
           ),

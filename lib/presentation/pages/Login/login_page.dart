@@ -138,7 +138,7 @@ class _LoginPageState extends State<LoginPage> {
                             .pushNamed(VerifyEmailPage.routename);
                       }
                     }).catchError((e) {
-                      SnackBars.showErrorSnackBar(context, e.toString());
+                      Toasts.showErrorSnackBar(context, e.toString());
                     });
                   },
                   onLongPress: () {

@@ -5,7 +5,7 @@ import 'package:instaclone/models/chat_user.dart';
 import 'package:instaclone/models/user_post.dart';
 import 'package:collection/collection.dart';
 
-enum MediaType { image, video }
+// enum MediaType { image, video }
 
 class Story with ChangeNotifier {
   Story({
