@@ -128,6 +128,8 @@ class _AddPostOrReelsOrStoryPageState extends State<AddPostOrReelsOrStoryPage> {
                     ),
                     GestureDetector(
                       onTap: () {
+                        Provider.of<FetchMediasProvider>(context, listen: false)
+                            .disposeController();
                         jumpPage(2);
                       },
                       child: Text(

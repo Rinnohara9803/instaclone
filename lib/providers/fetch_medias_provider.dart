@@ -129,7 +129,7 @@ class FetchMediasProvider with ChangeNotifier {
     notifyListeners();
     _selectedVideo = vfm.files[0];
     notifyListeners();
-    initializeController();
+    // initializeController();
   }
 
   void setCurrentVideo() {

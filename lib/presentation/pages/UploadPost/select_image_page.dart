@@ -47,6 +47,7 @@ class _SelectImageWidgetState extends State<SelectImageWidget>
   @override
   Widget build(BuildContext context) {
     return Material(
+      color: Theme.of(context).primaryColor,
       child: Column(
         children: <Widget>[
           Padding(
@@ -201,12 +202,15 @@ class _SelectImageWidgetState extends State<SelectImageWidget>
                                 ),
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
-                                  border: Border.all(),
+                                  border: Border.all(
+                                    color: Theme.of(context).errorColor,
+                                  ),
                                   color: Colors.blueAccent,
                                 ),
-                                child: const Icon(
+                                child: Icon(
                                   Icons.copy,
                                   size: 18,
+                                  color: Theme.of(context).errorColor,
                                 ),
                               ),
                             )
@@ -221,11 +225,13 @@ class _SelectImageWidgetState extends State<SelectImageWidget>
                                 ),
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
-                                  border: Border.all(),
+                                  border: Border.all(
+                                    color: Theme.of(context).errorColor,
+                                  ),
                                 ),
-                                child: const Icon(
+                                child: Icon(
                                   Icons.copy,
-                                  color: Colors.black,
+                                  color: Theme.of(context).errorColor,
                                   size: 18,
                                 ),
                               ),

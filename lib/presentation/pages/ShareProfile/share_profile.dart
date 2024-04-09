@@ -169,7 +169,9 @@ class _ShareProfilePageState extends State<ShareProfilePage>
                               ),
                               decoration: BoxDecoration(
                                 color: Colors.transparent,
-                                border: Border.all(),
+                                border: Border.all(
+                                  color: Theme.of(context).errorColor,
+                                ),
                                 borderRadius: BorderRadius.circular(
                                   20,
                                 ),

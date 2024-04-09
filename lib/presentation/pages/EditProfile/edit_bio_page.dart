@@ -67,6 +67,7 @@ class EditBioPage extends StatelessWidget {
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
               TextField(
+                style: Theme.of(context).textTheme.bodyMedium,
                 autofocus: true,
                 decoration: InputDecoration(
                   enabledBorder: const UnderlineInputBorder(

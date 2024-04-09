@@ -39,7 +39,7 @@ class ShareProfileIconWidget extends StatelessWidget {
                     icon,
                     size: 25,
                     color:
-                        disabled ? Colors.grey : Theme.of(context).errorColor,
+                        disabled ? Colors.grey : Theme.of(context).primaryColor,
                   ),
                 ),
               ),
@@ -47,8 +47,9 @@ class ShareProfileIconWidget extends StatelessWidget {
               Text(
                 title,
                 style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                      color:
-                          disabled ? Colors.grey : Theme.of(context).errorColor,
+                      color: disabled
+                          ? Colors.grey
+                          : Theme.of(context).primaryColor,
                     ),
               )
             ],

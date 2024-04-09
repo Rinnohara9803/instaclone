@@ -29,6 +29,7 @@ class _SelectVideoWidgetState extends State<SelectVideoWidget> {
   @override
   Widget build(BuildContext context) {
     return Material(
+      color: Theme.of(context).primaryColor,
       child: Column(
         children: <Widget>[
           Padding(
@@ -40,7 +41,6 @@ class _SelectVideoWidgetState extends State<SelectVideoWidget> {
                 IconButton(
                   icon: const Icon(
                     Icons.clear,
-                    color: Colors.black,
                   ),
                   onPressed: () {
                     widget.navigateBack();
@@ -163,6 +163,7 @@ class _SelectVideoWidgetState extends State<SelectVideoWidget> {
                       onChanged: (VideoFileModel? d) {
                         fmp.changeVideoFileFolder(d!);
                         fmp.setSelectedVideo(d.files[0]);
+                        fmp.initializeController();
                       },
                       value: fmp.selectedVideoFileModel,
                       dropdownColor:
@@ -184,12 +185,15 @@ class _SelectVideoWidgetState extends State<SelectVideoWidget> {
                                 ),
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
-                                  border: Border.all(),
+                                  border: Border.all(
+                                    color: Theme.of(context).errorColor,
+                                  ),
                                   color: Colors.blueAccent,
                                 ),
-                                child: const Icon(
+                                child: Icon(
                                   Icons.copy,
                                   size: 18,
+                                  color: Theme.of(context).errorColor,
                                 ),
                               ),
                             )
@@ -204,11 +208,14 @@ class _SelectVideoWidgetState extends State<SelectVideoWidget> {
                                 ),
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
-                                  border: Border.all(),
+                                  border: Border.all(
+                                    color: Theme.of(context).errorColor,
+                                  ),
                                 ),
-                                child: const Icon(
+                                child: Icon(
                                   Icons.copy,
                                   size: 18,
+                                  color: Theme.of(context).errorColor,
                                 ),
                               ),
                             ),
@@ -221,7 +228,7 @@ class _SelectVideoWidgetState extends State<SelectVideoWidget> {
                           ).disposeController();
                         },
                         icon: const Icon(
-                          Icons.camera_alt,
+                          Icons.camera_alt_outlined,
                         ),
                       )
                     ],

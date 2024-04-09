@@ -51,6 +51,7 @@ class _DarkModePageState extends State<DarkModePage> {
                     Transform.scale(
                       scale: 1.2,
                       child: Checkbox(
+                        checkColor: Theme.of(context).primaryColor,
                         value: !themeData.isLightTheme,
                         onChanged: (bool? value) {
                           toggleDarkMode();
@@ -71,6 +72,7 @@ class _DarkModePageState extends State<DarkModePage> {
                     Transform.scale(
                       scale: 1.2,
                       child: Checkbox(
+                        checkColor: Theme.of(context).primaryColor,
                         value: themeData.isLightTheme,
                         onChanged: (bool? value) {
                           toggleDarkMode();

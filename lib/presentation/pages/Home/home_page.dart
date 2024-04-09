@@ -77,13 +77,19 @@ class _HomePageState extends State<HomePage>
               actions: [
                 Row(
                   children: [
-                    const Icon(Icons.favorite_outline),
+                    Icon(
+                      Icons.favorite_outline,
+                      color: Theme.of(context).errorColor,
+                    ),
                     const SizedBox(width: 20),
                     GestureDetector(
                       onTap: () {
                         widget.navigateToChatsPage();
                       },
-                      child: const Icon(Icons.message_outlined),
+                      child: Icon(
+                        Icons.message_outlined,
+                        color: Theme.of(context).errorColor,
+                      ),
                     ),
                     const SizedBox(width: 10),
                   ],
