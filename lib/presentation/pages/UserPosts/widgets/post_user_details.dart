@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:instaclone/apis/chat_apis.dart';
 import 'package:instaclone/models/chat_user.dart';
 
-import '../../../../models/user_post.dart';
-
 class PostUserDetails extends StatelessWidget {
   const PostUserDetails({
     super.key,

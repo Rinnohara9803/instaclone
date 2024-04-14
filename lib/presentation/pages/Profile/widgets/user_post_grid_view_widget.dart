@@ -2,6 +2,7 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:instaclone/models/user_post.dart';
+import 'package:instaclone/presentation/pages/Profile/widgets/comment_box.dart';
 import 'package:instaclone/presentation/pages/Profile/widgets/user_post_grid_video_widget.dart';
 import 'package:instaclone/presentation/pages/UserPosts/user_posts_page.dart';
 import 'package:instaclone/providers/post_details_popop_provider.dart';
@@ -10,7 +11,8 @@ import 'package:instaclone/utilities/snackbars.dart';
 import 'package:provider/provider.dart';
 
 class UserPostGridViewWidget extends StatefulWidget {
-  const UserPostGridViewWidget({super.key});
+  const UserPostGridViewWidget({super.key, required this.postId});
+  final String postId;
 
   @override
   State<UserPostGridViewWidget> createState() => UserPostGridViewWidgetState();
@@ -26,6 +28,7 @@ class UserPostGridViewWidgetState extends State<UserPostGridViewWidget> {
   @override
   void initState() {
     setAudio();
+
     super.initState();
   }
 
@@ -45,6 +48,30 @@ class UserPostGridViewWidgetState extends State<UserPostGridViewWidget> {
         dy >= 0 &&
         dx <= distanceThreshold &&
         dy <= distanceThreshold;
+  }
+
+  final scrollController = DraggableScrollableController();
+
+  void _openBottomSheet(BuildContext theContext, String postId) {
+    showModalBottomSheet(
+      context: theContext,
+      isScrollControlled: true,
+      builder: (context) {
+        return DraggableScrollableSheet(
+          initialChildSize: 0.95,
+          maxChildSize: 0.95,
+          minChildSize: 0.6,
+          controller: scrollController,
+          expand: false,
+          builder: (context, scrollController) {
+            return CommentBox(
+              postId: postId,
+              scrollController: scrollController,
+            );
+          },
+        );
+      },
+    );
   }
 
   @override
@@ -95,16 +122,21 @@ class UserPostGridViewWidgetState extends State<UserPostGridViewWidget> {
 
             // Print the result
             if (isNearCommentIconButton) {
+              data.setShowDialog();
+
+              _openBottomSheet(context, post.id);
             } else if (isNearFavoriteIconButton) {
               data.selectedPost!.toggleIsLiked();
+              data.setShowDialog();
             } else if (isNearSendIconButton) {
               Toasts.showNormalSnackbar(context, 'On Send icons');
+              data.setShowDialog();
             } else if (isNearMenuIconButton) {
               Toasts.showNormalSnackbar(context, 'On Menu Icon');
+              data.setShowDialog();
             } else {
-              Toasts.showNormalSnackbar(context, 'No on anything');
+              data.setShowDialog();
             }
-            data.setShowDialog();
           },
           onLongPressMoveUpdate: (updateDetails) async {
             data.accessButtonPositions();

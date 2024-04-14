@@ -29,6 +29,7 @@ class _UserPostGridViewVideoWidgetState
 
   @override
   void dispose() {
+    _controller.pause();
     _controller.dispose();
     super.dispose();
   }
@@ -39,12 +40,27 @@ class _UserPostGridViewVideoWidgetState
       future: _initializeVideoPlayerFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
-          return VideoPlayer(
-            _controller,
-          );
+          return VideoPlayer(_controller);
+          // return LayoutBuilder(builder: (context, cts) {
+          //   return SizedBox.expand(
+          //     child: FittedBox(
+          //       fit: BoxFit.cover,
+          //       child: SizedBox(
+          //         width: cts.maxWidth,
+          //         height: cts.maxWidth,
+          //         child: VideoPlayer(_controller),
+          //       ),
+          //     ),
+          //   );
+          // });
         } else if (snapshot.hasError) {
           return Container(
             color: Colors.grey,
+            child: const Center(
+              child: Icon(
+                Icons.error,
+              ),
+            ),
           );
         } else {
           return Container(

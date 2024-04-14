@@ -768,6 +768,11 @@ class _UserPostVideoPopOPState extends State<UserPostVideoPopOP> {
         } else if (snapshot.hasError) {
           return Container(
             color: Colors.grey,
+            child: const Center(
+              child: Icon(
+                Icons.error,
+              ),
+            ),
           );
         } else {
           return Container(

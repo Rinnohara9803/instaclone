@@ -111,7 +111,9 @@ class _UserPostsGridViewState extends State<UserPostsGridView>
                     itemBuilder: (context, index) {
                       return ChangeNotifierProvider.value(
                         value: postData.userPosts[index],
-                        child: const UserPostGridViewWidget(),
+                        child: UserPostGridViewWidget(
+                          postId: postData.userPosts[index].id,
+                        ),
                       );
                     },
                   ),

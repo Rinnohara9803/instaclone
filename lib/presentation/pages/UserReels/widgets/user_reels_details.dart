@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:instaclone/models/reel_modal.dart';
 import 'package:instaclone/models/user_post.dart';
 import 'package:instaclone/presentation/pages/UserReels/widgets/reel_details.dart';
 

@@ -200,6 +200,21 @@ class ChatApis {
         .snapshots();
   }
 
+  static Future<ChatUser?> getUserInformation(String userId) async {
+    try {
+      final userData = await firestore.collection('users').doc(userId).get();
+      if (userData.exists) {
+        final chatUser = ChatUser.fromJson(userData.data()!);
+        return chatUser;
+      } else {
+        return null;
+      }
+    } catch (e) {
+      print('Error fetching user information: $e');
+      return null;
+    }
+  }
+
   // profile info snapshot
   static Stream<QuerySnapshot<Map<String, dynamic>>> getProfileInfo() {
     final userId = FirebaseAuth.instance.currentUser!.uid;

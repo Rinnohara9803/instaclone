@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:instaclone/models/reel_modal.dart';
 import 'package:instaclone/models/user_post.dart';
 import 'package:instaclone/presentation/pages/UserPosts/widgets/animated_favorite_widget.dart';
 import 'package:instaclone/presentation/pages/UserPosts/widgets/post_user_details.dart';

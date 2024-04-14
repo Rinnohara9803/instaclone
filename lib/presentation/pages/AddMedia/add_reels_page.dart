@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:instaclone/models/reel_modal.dart';
 import 'package:instaclone/models/user_post.dart';
 import 'package:instaclone/presentation/pages/AddMedia/widgets/overlayed_widget.dart';
 import 'package:instaclone/presentation/pages/Dashboard/initial_page.dart';

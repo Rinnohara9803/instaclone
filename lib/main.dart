@@ -13,6 +13,7 @@ import 'package:instaclone/presentation/pages/Register/register_with_phone_page_
 import 'package:instaclone/presentation/pages/ShareProfile/share_profile.dart';
 import 'package:instaclone/presentation/pages/Splash/splash_page.dart';
 import 'package:instaclone/providers/chat_details_provider.dart';
+import 'package:instaclone/providers/comments_provider.dart';
 import 'package:instaclone/providers/fetch_medias_provider.dart';
 import 'package:instaclone/providers/post_details_popop_provider.dart';
 import 'package:instaclone/providers/profile_data_provider.dart';
@@ -83,6 +84,9 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider<PostDetailsPopDialogProvider>(
           create: (ctx) => PostDetailsPopDialogProvider(),
+        ),
+        ChangeNotifierProvider<CommentsProvider>(
+          create: (ctx) => CommentsProvider(),
         ),
       ],
       child: Consumer<ThemeProvider>(

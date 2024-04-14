@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:instaclone/presentation/pages/Profile/widgets/comment_box.dart';
 import 'package:instaclone/presentation/pages/UserPosts/widgets/post_user_details.dart';
 import 'package:instaclone/presentation/pages/UserPosts/widgets/video_post_widget.dart';
 import 'package:instaclone/utilities/my_date_util.dart';
@@ -78,6 +79,30 @@ class _UserPostWidgetState extends State<UserPostWidget>
     _animationController1.dispose();
     _pageController.dispose();
     super.dispose();
+  }
+
+  final scrollController = DraggableScrollableController();
+
+  void _openBottomSheet(BuildContext theContext, String postId) {
+    showModalBottomSheet(
+      context: theContext,
+      isScrollControlled: true,
+      builder: (context) {
+        return DraggableScrollableSheet(
+          initialChildSize: 0.95,
+          maxChildSize: 0.95,
+          minChildSize: 0.6,
+          controller: scrollController,
+          expand: false,
+          builder: (context, scrollController) {
+            return CommentBox(
+              postId: postId,
+              scrollController: scrollController,
+            );
+          },
+        );
+      },
+    );
   }
 
   @override
@@ -276,7 +301,9 @@ class _UserPostWidgetState extends State<UserPostWidget>
                       ),
                     ),
                     IconButton(
-                      onPressed: () async {},
+                      onPressed: () async {
+                        _openBottomSheet(context, post.id);
+                      },
                       icon: const Icon(
                         Icons.messenger_outline_sharp,
                       ),

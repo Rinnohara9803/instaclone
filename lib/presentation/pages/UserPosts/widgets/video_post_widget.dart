@@ -35,7 +35,7 @@ class VideoPostWidgetState extends State<VideoPostWidget> {
   @override
   void dispose() {
     _controller!.pause();
-    // _controller!.dispose();
+    _controller!.dispose();
     super.dispose();
   }
 

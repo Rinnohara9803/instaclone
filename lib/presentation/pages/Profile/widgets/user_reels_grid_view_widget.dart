@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:instaclone/models/reel_modal.dart';
 import 'package:instaclone/models/user_post.dart';
 import 'package:instaclone/presentation/pages/UserReels/user_reels_page.dart';
 import 'package:instaclone/providers/user_reels_provider.dart';
@@ -63,6 +62,7 @@ class _UserReelGridViewVideoWidgetState
 
   @override
   void dispose() {
+    _controller.pause();
     _controller.dispose();
     super.dispose();
   }
@@ -106,15 +106,15 @@ class _UserReelGridViewVideoWidgetState
             ),
           );
         } else if (snapshot.hasError) {
-          print('video error');
-          print(snapshot.error);
-
           return Container(
             color: Colors.grey,
+            child: const Center(
+              child: Icon(
+                Icons.error,
+              ),
+            ),
           );
         } else {
-          print('video error');
-          print('hey hey');
           return Container(
             color: Colors.grey,
           );

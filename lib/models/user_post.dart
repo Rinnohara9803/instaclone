@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:instaclone/apis/user_apis.dart';
 import 'package:collection/collection.dart';
@@ -54,11 +55,12 @@ class UserPostModel with ChangeNotifier {
   late bool isBookmarked;
 
   Future<void> toggleIsBookmarked() async {
+    final user = FirebaseAuth.instance.currentUser;
     if (!isBookmarked) {
       isBookmarked = true;
       notifyListeners();
 
-      bookmarks.add(Bookmarks(userId: UserApis.user!.uid));
+      bookmarks.add(Bookmarks(userId: user!.uid));
       await UserApis.firestore
           .collection('posts')
           .doc(id)
@@ -73,7 +75,7 @@ class UserPostModel with ChangeNotifier {
     } else {
       isBookmarked = false;
       notifyListeners();
-      bookmarks.removeWhere((element) => element.userId == UserApis.user!.uid);
+      bookmarks.removeWhere((element) => element.userId == user!.uid);
       await UserApis.firestore
           .collection('posts')
           .doc(id)
@@ -91,11 +93,12 @@ class UserPostModel with ChangeNotifier {
   }
 
   Future<void> toggleIsLiked() async {
+    final user = FirebaseAuth.instance.currentUser;
     if (!isLiked) {
       isLiked = true;
       notifyListeners();
 
-      likes.add(UserID(userId: UserApis.user!.uid));
+      likes.add(UserID(userId: user!.uid));
       await UserApis.firestore
           .collection('posts')
           .doc(id)
@@ -110,7 +113,7 @@ class UserPostModel with ChangeNotifier {
     } else {
       isLiked = false;
       notifyListeners();
-      likes.removeWhere((element) => element.userId == UserApis.user!.uid);
+      likes.removeWhere((element) => element.userId == user!.uid);
       await UserApis.firestore
           .collection('posts')
           .doc(id)
@@ -128,6 +131,7 @@ class UserPostModel with ChangeNotifier {
   }
 
   UserPostModel.fromJson(Map<String, dynamic> json) {
+    final user = FirebaseAuth.instance.currentUser;
     medias = List.from(json['medias']).map((e) => Media.fromJson(e)).toList();
     location = json['location'];
     caption = json['caption'];
@@ -137,12 +141,12 @@ class UserPostModel with ChangeNotifier {
         List.from(json['bookmarks']).map((e) => Bookmarks.fromJson(e)).toList();
     userId = json['userId'];
     postType = json['postType'] == 'post' ? PostType.post : PostType.reel;
-    isLiked = likes.firstWhereOrNull(
-            (element) => element.userId == UserApis.user!.uid) !=
-        null;
-    isBookmarked = bookmarks.firstWhereOrNull(
-            (element) => element.userId == UserApis.user!.uid) !=
-        null;
+    isLiked =
+        likes.firstWhereOrNull((element) => element.userId == user!.uid) !=
+            null;
+    isBookmarked =
+        bookmarks.firstWhereOrNull((element) => element.userId == user!.uid) !=
+            null;
   }
 
   Map<String, dynamic> toJson() {
